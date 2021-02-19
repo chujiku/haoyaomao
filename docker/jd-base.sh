@@ -1,3 +1,4 @@
+
 clear
 
 echo "
@@ -9,7 +10,7 @@ echo "
 \______|    \/               \/     \/     \/     \/
                                                                                                   
 "
-DOCKER_IMG_NAME="DX3242/jd-base"
+DOCKER_IMG_NAME="dx3242/jd-base"
 JD_PATH=""
 SHELL_FOLDER=$(pwd)
 CONTAINER_NAME=""
