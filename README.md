@@ -16,12 +16,12 @@
 
 * 如果任何单位或个人认为该项目的脚本可能涉嫌侵犯其权利，则应及时通知并提供身份证明，所有权证明，我们将在收到认证文件后删除相关脚本.
 
-* 任何以任何方式查看此项目的人或直接或间接使用该MyActions项目的任何脚本的使用者都应仔细阅读此声明。ZFeng3242 保留随时更改或补充此免责声明的权利。一旦使用并复制了任何相关脚本或JD-haoyangmao项目的规则，则视为您已接受此免责声明.
+* 任何以任何方式查看此项目的人或直接或间接使用该JD-haoyangmao项目的任何脚本的使用者都应仔细阅读此声明。ZFeng3242 保留随时更改或补充此免责声明的权利。一旦使用并复制了任何相关脚本或JD-haoyangmao项目的规则，则视为您已接受此免责声明.
 
  **您必须在下载后的24小时内从计算机或手机中完全删除以上内容.**  </br>
 > ***您使用或者复制了本仓库且本人制作的任何脚本，则视为`已接受`此声明，请仔细阅读*** 
 
-## 使用教程
+## 一丶使用教程
 
 1. [按照这个教程进行 reposync](https://thoughts.teambition.com/share/6013bd119ff53400460b97f6#title=如何使用Github挂京东水果等)
 2. 再在`Settings`-`Secrets`里面添加`JD_COOKIE`
@@ -35,7 +35,12 @@ lxk0301-环境变量合集（Secrets）配置[点击查看](https://gitee.com/lx
 
 > 具体如何取 cookie 如何配置,可参考 [获取京东Cookies教程](https://thoughts.teambition.com/share/600bfeb863d4740047ac9ca9#title=如何抓取JD-Cookie)
 
-## 联系我们
+## 二丶[Docker2 V3 gitee库使用教程](backup/docker/Docker2.md)
+
+## [如果你感觉上面的学不会，那么点这里可以走捷径](backup/docker/Docker2.1.md)
+
+
+## 三丶联系我们
 
 https://t.me/JD_DX1005
 
