@@ -30,9 +30,9 @@ ADD_CART = $.isNode() ? (process.env.PURCHASE_SHOPS ? process.env.PURCHASE_SHOPS
 // 加入购物车开关，与东东小窝共享
 
 let inviteCodes = [
-  '28a699ac78d74aa3b31f7103597f8927@2f14ee9c92954cf79829320dd482bf49@fdf827db272543d88dbb51a505c2e869@ce2536153a8742fb9e8754a9a7d361da@38ba4e7ba8074b78851e928af2b4f6b2',
-  '28a699ac78d74aa3b31f7103597f8927@2f14ee9c92954cf79829320dd482bf49@fdf827db272543d88dbb51a505c2e869@ce2536153a8742fb9e8754a9a7d361da@38ba4e7ba8074b78851e928af2b4f6b2',
-]
+  '7e10c9a5d9ba414cb0466be9d5da2966@f4349de5f9df4349de5f9d74652ac2d358796f3f315',
+  '7e10c9a5d9ba414cb0466be9d5da2966@f4349de5f9df4349de5f9d74652ac2d358796f3f315'
+  ]
 
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
