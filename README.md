@@ -44,7 +44,7 @@
 
 ## 三丶联系我们
 
-[电报通知群]https://t.me/JD_DX1005
+1.[电报通知群](https://t.me/JD_DX1005)
 
-[企鹅群](https://jq.qq.com/?_wv=1027&k=0GtVKLzh)
+2.[企鹅群](https://jq.qq.com/?_wv=1027&k=0GtVKLzh)
 
