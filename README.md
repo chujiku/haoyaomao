@@ -29,10 +29,8 @@
 4. 前三步之后，点击一下右上角的 star（fork 左边那个），让 workflow 运行一次。
 
   
-  喜马拉雅极速版专属环境变量[点击查看](backup/xmly.md)
-  lxk0301-环境变量合集（Secrets）配置[点击查看](https://gitee.com/lxk0301/jd_scripts/blob/master/githubAction.md)
-
-
+> 喜马拉雅极速版专属环境变量[点击查看](backup/xmly.md)
+> lxk0301-环境变量合集（Secrets）配置[点击查看](https://gitee.com/lxk0301/jd_scripts/blob/master/githubAction.md)
 > 具体如何取 cookie 如何配置,可参考 [获取京东Cookies教程](https://thoughts.teambition.com/share/600bfeb863d4740047ac9ca9#title=如何抓取JD-Cookie)
 
 ## 二丶Docker使用教程
