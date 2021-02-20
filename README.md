@@ -28,23 +28,23 @@
 3. 多条 cookie 用`&`隔开，支持无数条 cookie
 4. 前三步之后，点击一下右上角的 star（fork 左边那个），让 workflow 运行一次。
 
-喜马拉雅极速版专属环境变量[点击查看](backup/xmly.md)
-
-lxk0301-环境变量合集（Secrets）配置[点击查看](https://gitee.com/lxk0301/jd_scripts/blob/master/githubAction.md)
+  
+  喜马拉雅极速版专属环境变量[点击查看](backup/xmly.md)
+  lxk0301-环境变量合集（Secrets）配置[点击查看](https://gitee.com/lxk0301/jd_scripts/blob/master/githubAction.md)
 
 
 > 具体如何取 cookie 如何配置,可参考 [获取京东Cookies教程](https://thoughts.teambition.com/share/600bfeb863d4740047ac9ca9#title=如何抓取JD-Cookie)
 
 ## 二丶Docker使用教程
 
-[Docker2 V3 gitee库使用教程](backup/docker/Docker2.md)
+1.[Docker2 V3 gitee库使用教程](backup/docker/Docker2.md)
 
-如果你感觉上面的学不会，那么点[这里](backup/docker/Docker2.1.md)可以走捷径
+2.如果你感觉上面的学不会，那么点[这里](backup/docker/Docker2.1.md)可以走捷径
 
 
 ## 三丶联系我们
 
-https://t.me/JD_DX1005
+[电报通知群]https://t.me/JD_DX1005
 
 [企鹅群](https://jq.qq.com/?_wv=1027&k=0GtVKLzh)
 
