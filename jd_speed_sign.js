@@ -483,7 +483,7 @@ function invite2() {
     'origin': 'https://assignment.jd.com',
     'accept-language': 'zh-cn',
     'user-agent': 'jdltapp;iPad;3.1.0;14.4;a54abe779c8fbeb4e8e34f01fdc5cc4dd78173a2;network/wifi;ADID/BB69CC09-77D8-43A2-8645-CBC4CCE49911;hasUPPay/0;pushNoticeIsOpen/0;lang/zh_CN;model/iPad13,1;addressid/3438850002;hasOCPay/0;appBuild/1017;supportBestPay/0;pv/14.9;apprpd/ProductCoupon_MergeMain;ref/FSPromListViewController;psq/0;ads/;psn/a54abe779c8fbeb4e8e34f01fdc5cc4dd78173a2|27;jdv/0|kong|t_1000170135|tuiguang|notset|1613101365448|1613101365;adk/;app_device/IOS;pap/JA2020_3112531|3.1.0|IOS 14.4;Mozilla/5.0 (iPad; CPU OS 14_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1',
-    'referer': 'https://assignment.jd.com/?inviterId=Wy3rGd8o4Vckq1VucBFJjA==&lng=0.000000&lat=0.000000&sid=2131b85f0bcb82714e032402628cc2fw&un_area=12_904_50647_57886',
+    'referer': 'https://assignment.jd.com/invitee/?inviterId=KU593YFLJkjbuTriSsxsZuxEcFyhW5th6R8db0HEhx0=&lng=0.000000&lat=0.000000&sid=2131b85f0bcb82714e032402628cc2fw&un_area=12_904_50647_57886',
     'Cookie': cookie
   };
 
