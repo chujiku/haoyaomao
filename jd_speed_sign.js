@@ -487,7 +487,7 @@ function invite2() {
     'Cookie': cookie
   };
 
-  var dataString = `functionId=TaskInviteService&body={"method":"participateInviteTask","data":{"channel":"1","encryptionInviterPin":"Wy3rGd8o4Vckq1VucBFJjA%3D%3D","type":1}}&appid=market-task-h5&uuid=&_t=${t}`;
+  var dataString = `functionId=TaskInviteService&body={"method":"participateInviteTask","data":{"channel":"1","encryptionInviterPin":"KU593YFLJkjbuTriSsxsZuxEcFyhW5th6R8db0HEhx0%3D","type":1}}&appid=market-task-h5&uuid=&_t=${t}`;
 
   var options = {
     url: 'https://api.m.jd.com/',
