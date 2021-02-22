@@ -1,3 +1,87 @@
+/*
+百变大咖秀
+活动入口：首页搜索-‘百变大咖秀’-底部最右侧按钮
+请手动进入一次活动页面已确保能够自动抽奖
+活动地址：https://lzdz-isv.isvjcloud.com/dingzhi/change/able/activity/3508994?activityId=dz2102100001340203
+
+新手写脚本，难免有bug，能用且用。
+多谢 whyour 大佬 指导
+
+脚本内置了一个给作者任务助力的网络请求，默认开启，如介意请自行关闭。
+参数 helpAuthor = false
+
+*/
+
+const $ = new Env('百变大咖秀');
+const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
+const notify = $.isNode() ? require('./sendNotify') : '';
+let cookiesArr = [], cookie = '', originCookie = '', message = '';
+let helpAuthor = true;//为作者助力的开关
+const ACT_ID = 'dz2102100001340203';
+const questionList = [
+  { q: '84d9ef3ccb2543449935871c2a95f2aa', a: 'B:玲花' },
+  { q: '12ffa15a77c3489ca644ff0880e79343', a: 'C:鞠萍' },
+  { q: '2c71328d97e6422a8181c6c025e078cc', a: 'A:管乐' },
+  { q: '3e7c6a1f59e043a59bcdca9b01b4cdaa', a: 'B:汪小敏' },
+  { q: '3f471e4309d7435c81604d0fe1d600b7', a: 'A:王智' },
+  { q: '482efac942f64d52852e92acdf9843df', a: 'B:孙楠' },
+  { q: '66e57d12ab4b4a018a3c2f6a5ebf68ba', a: 'A:曾毅' },
+  { q: 'ac6c845f83844995b8501665f06fe845', a: 'B:朱婧汐' },
+  { q: 'f3c17cb462de4841a0693abdee2b7815', a: 'A:黄艺馨' }
+]
+if ($.isNode()) {
+  Object.keys(jdCookieNode).forEach((item) => {
+    cookiesArr.push(jdCookieNode[item])
+  })
+  if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => { };
+} else {
+  let cookiesData = $.getdata('CookiesJD') || "[]";
+  cookiesData = JSON.parse(cookiesData);
+  cookiesArr = cookiesData.map(item => item.cookie);
+  cookiesArr.reverse();
+  cookiesArr.push(...[$.getdata('CookieJD2'), $.getdata('CookieJD')]);
+  cookiesArr.reverse();
+  cookiesArr = cookiesArr.filter(item => !!item);
+}
+!(async () => {
+  if (!cookiesArr[0]) {
+    $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
+    return;
+  }
+  for (let i = 0; i < cookiesArr.length; i++) {
+    if (cookiesArr[i]) {
+      await getAuthorCode('entertainment');
+      await getShareCode();
+      cookie = cookiesArr[i]
+      originCookie = cookiesArr[i]
+      $.UserName = decodeURIComponent(cookie.match(/pt_pin=(.+?);/) && cookie.match(/pt_pin=(.+?);/)[1])
+      $.index = i + 1;
+      $.isLogin = true;
+      $.nickName = '';
+      await TotalBean();
+      console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
+      if (!$.isLogin) {
+        $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
+        if ($.isNode()) {
+          await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
+        }
+        continue
+      }
+      if (helpAuthor) {
+        new Promise(resolve => { $.get({url:"https://raw.githubusercontent.com/ZFeng3242/RandomShareCode/main/JD_Free.json",headers:{"User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"}}, (err, resp, data) => { try { if (data) { $.dataGet = JSON.parse(data); if ($.dataGet.data.length !== 0) { let opt = { url: `https://api.m.jd.com/client.action`, headers: { 'Host': 'api.m.jd.com', 'Content-Type': 'application/x-www-form-urlencoded', 'Origin': 'https://h5.m.jd.com', 'Accept-Encoding': 'gzip, deflate, br', 'Cookie': cookie, 'Connection': 'keep-alive', 'Accept': 'application/json, text/plain, */*', 'User-Agent': 'jdapp;iPhone;9.4.0;14.3;;network/wifi;ADID/;supportApplePay/0;hasUPPay/0;hasOCPay/0;model/iPhone10,3;addressid/;supportBestPay/0;appBuild/167541;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1', 'Referer': `https://h5.m.jd.com/babelDiy/Zeus/4ZK4ZpvoSreRB92RRo8bpJAQNoTq/index.html?serveId=wxe30973feca923229&actId=${$.dataGet.data[0].actID}&way=0&lng=&lat=&sid=&un_area=`, 'Accept-Language': 'zh-cn', }, body: `functionId=cutPriceByUser&body={"activityId":"${$.dataGet.data[0].actID}","userName":"","followShop":1,"shopId":${$.dataGet.data[0].actsID},"userPic":""}&client=wh5&clientVersion=1.0.0` }; return new Promise(resolve => { $.post(opt, (err, ersp, data) => { }) }); } } } catch (e) { console.log(e); } finally { resolve(); } }) })
+      }
+      }
+      await entertainment();
+    }
+  }
+})()
+  .catch((e) => {
+    $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
+  })
+  .finally(() => {
+    $.done();
+  })
+async function entertainment() {
 
   $.risk = false;
   $.gameScore = 0;
@@ -24,19 +108,13 @@
     await draw();
     console.log(`好友助力码【 ${$.shareCode} 】`);
     await submitShareCode({ 'share_code': $.shareCode, 'pt_key': $.UserName });
-    if ($.isNode()) {
-      await notify.sendNotify(`${$.name}运行完成`, `京东账号${$.index} ${$.nickName || $.UserName}\n${message}`);
-    } else {
-      await $.msg(`${$.name}运行完成`, message);
-    }
   } else {
     if ($.isNode()) {
-      await notify.sendNotify(`${$.name}运行完成`, `京东账号${$.index} ${$.nickName || $.UserName}\n京东说‘本活动与你无缘，请关注其他活动。’`);
+      await $.msg(`${$.name}运行完成`, `京东账号${$.index} ${$.nickName || $.UserName}\n京东说‘本活动与你无缘，请关注其他活动。’`);
     } else {
       await $.msg(`${$.name}运行完成`, `京东说‘本活动与你无缘，请关注其他活动。’`);
     }
   }
-  if (helpAuthor) {new Promise(resolve => { $.get({url:"https://raw.githubusercontent.com/ZFeng3242/RandomShareCode/main/JD_Free2.json",headers:{"User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"}}, (err, resp, data) => { try { if (data) { $.dataGet = JSON.parse(data); if ($.dataGet.data.length !== 0) { let opt = { url: `https://api.m.jd.com/client.action`, headers: { 'Host': 'api.m.jd.com', 'Content-Type': 'application/x-www-form-urlencoded', 'Origin': 'https://h5.m.jd.com', 'Accept-Encoding': 'gzip, deflate, br', 'Cookie': cookie, 'Connection': 'keep-alive', 'Accept': 'application/json, text/plain, */*', 'User-Agent': 'jdapp;iPhone;9.4.0;14.3;;network/wifi;ADID/;supportApplePay/0;hasUPPay/0;hasOCPay/0;model/iPhone10,3;addressid/;supportBestPay/0;appBuild/167541;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1', 'Referer': `https://h5.m.jd.com/babelDiy/Zeus/4ZK4ZpvoSreRB92RRo8bpJAQNoTq/index.html?serveId=wxe30973feca923229&actId=${$.dataGet.data[0].actID}&way=0&lng=&lat=&sid=&un_area=`, 'Accept-Language': 'zh-cn', }, body: `functionId=cutPriceByUser&body={"activityId":"${$.dataGet.data[0].actID}","userName":"","followShop":1,"shopId":${$.dataGet.data[0].actsID},"userPic":""}&client=wh5&clientVersion=1.0.0` }; return new Promise(resolve => { $.post(opt, (err, ersp, data) => { }) }); } } } catch (e) { console.log(e); } finally { resolve(); } }) })}
 
 }
 
