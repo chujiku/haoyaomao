@@ -19,6 +19,8 @@
  **您必须在下载后的24小时内从计算机或手机中完全删除以上内容.**  </br>
 > ***您使用或者复制了本仓库且本人制作的任何脚本，则视为`已接受`此声明，请仔细阅读*** 
 
+## 脚本作者：[@lxk0301](https://gitee.com/lxk0301)  [@i-chenzhe](https://github.com/i-chenzhe)  [@whyour](https://github.com/whyour) 
+
 ## 一丶 githubAction 使用教程
 
 1. [按照这个教程进行 reposync](https://thoughts.teambition.com/share/6013bd119ff53400460b97f6#title=如何使用Github挂京东水果等)
