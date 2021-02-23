@@ -39,4 +39,4 @@
 2. 如果你感觉上面的学不会，那么点[这里](backup/docker/Docker2.1.md)可以走捷径
 
 ## 三丶云函数部署教程
-1. GithubAction快速部署到云函数[教程](TecentScf/tecentscf.md)
+1. GithubAction快速部署到云函数[教程](TencentScf/tencentscf.md)
