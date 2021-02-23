@@ -10,7 +10,7 @@
 | SCF_REGION            | 腾讯云函数     | 必须                      |腾讯云函数目前所支持的地域信息，[参考取值](https://cloud.tencent.com/document/product/583/17299)  |
 | TENCENT_FUNCTION_NAME | 腾讯云函数     | 必须                      |腾讯云函数名称，自行决定  |
 
-#### 请将以上环境变量填写完全，环境变量的获取方法详见[下方]()
+#### 请将以上环境变量填写完全，环境变量的获取方法详见[下方](https://github.com/ZFeng3242/JD-haoyangmao/blob/main/TencentScf/tencentscf.md#2-%E5%9C%A8%E8%BF%99%E9%87%8C%E6%96%B0%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%AE%BF%E9%97%AE%E5%AF%86%E9%92%A5%E6%96%B0%E5%BB%BA%E5%AF%86%E9%92%A5)
 ### 1. 开通服务
 
 依次登录 [SCF 云函数控制台](https://console.cloud.tencent.com/scf) 和 [SLS 控制台](https://console.cloud.tencent.com/sls) 开通相关服务，确保账户下已开通服务并创建相应[服务角色](https://console.cloud.tencent.com/cam/role) **SCF_QcsRole、SLS_QcsRole**
