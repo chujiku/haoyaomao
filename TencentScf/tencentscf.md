@@ -1,6 +1,8 @@
 ## Github Action 部署
 
-## ！注意：环境变量最大不能超过4kb，故不能添加过多的ck，如需放置相当数量的ck，请自行更改`D-Cookie`与`TENCENT_FUNCTION_NAME`后创建新的云函数放置
+### ！注意：环境变量最大不能超过4kb，故不能添加过多的ck，如需放置相当数量的ck，请自行更改`JD-Cookie`与`TENCENT_FUNCTION_NAME`后创建新的云函数放置
+
+
 ## 环境变量说明
 
 
