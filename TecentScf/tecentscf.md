@@ -1,4 +1,13 @@
 ## Github Action 部署
+
+## 环境变量说明
+| NAME | 归属                         | 属性                       |说明                                                                            |
+| ---- | ------------------------------ | -------------------------丨------------------------------------------------------------------------------- |
+| TENCENT_SECRET_ID     | 腾讯云函数     | 必须                      |腾讯云函数API密钥 [SecretId]((https://console.cloud.tencent.com/cam/capi)|
+| TENCENT_SECRET_KEY    | 腾讯云函数     | 必须                      |腾讯云函数API密钥 [SecretKey]((https://console.cloud.tencent.com/cam/capi)|
+| SCF_REGION            | 腾讯云函数     | 必须                      |腾讯云函数目前所支持的地域信息，[参考取值](https://cloud.tencent.com/document/product/583/17299)|
+| TENCENT_FUNCTION_NAME | 腾讯云函数     | 必须                      |腾讯云函数名称，自行决定|
+
 ### 1. 开通服务
 
 依次登录 [SCF 云函数控制台](https://console.cloud.tencent.com/scf) 和 [SLS 控制台](https://console.cloud.tencent.com/sls) 开通相关服务，确保账户下已开通服务并创建相应[服务角色](https://console.cloud.tencent.com/cam/role) **SCF_QcsRole、SLS_QcsRole**
