@@ -17,7 +17,13 @@
 > 注意！为了确保权限足够，获取这两个参数时不要使用子账户！此外，腾讯云账户需要[实名认证](https://console.cloud.tencent.com/developer/auth)。
 
 ### 2. 在这里新建一个访问密钥[新建密钥](https://console.cloud.tencent.com/cam/capi)
-> 将SecretId和SecretKey分别配置在仓库的secrets变量里面， TENCENT_SECRET_ID对应你的SecretId的值，TENCENT_SECRET_KEY对应你的SecretKey的值
+
+> 将SecretId和SecretKey分别配置在仓库的secrets变量里面
+
+> TENCENT_SECRET_ID对应你的SecretId的值，TENCENT_SECRET_KEY对应你的SecretKey的值
+ 
+> SCF_REGION参照上方环境变量说明的参考取值，对应地区自行选择
+
 
 ### 3. 配置自己需要secrets变量[参考这里](githubAction.md#下方提供使用到的-secrets全集合)
 
@@ -37,4 +43,4 @@
 
 ![测试函数](https://user-images.githubusercontent.com/6993269/99628053-5a9eea80-2a70-11eb-906f-f1d5ea2bfa3a.png)
 
-### 6. 设置触发器[看这里](iCloud.md#5设置触发器) 或者看这里的[注释说明](https://github.com/iouAkira/jd_scripts/blob/patch-1/index.js#L4)
+### 6. 设置触发器[看这里](iCloud.md#5设置触发器) 
