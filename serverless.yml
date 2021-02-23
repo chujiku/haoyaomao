@@ -22,12 +22,12 @@ inputs:
           cronExpression: "0 0 0 * * * *"
           enable: true
           argument: jd_bean_sign
-    - timer: #东东超市兑换奖品 #摇京豆 #京东汽车兑换 #宠汪汪兑换
+    - timer: #东东超市兑换奖品 #摇京豆 #京东汽车兑换
         parameters:
-          name: blueCoin_clublottery_carexchange_joyreward
+          name: blueCoin_clublottery_carexchange
           cronExpression: "0 0 0 * * * *"
           enable: true
-          argument: jd_blueCoin&jd_club_lottery&jd_car_exchange&jd_joy_reward
+          argument: jd_blueCoin&jd_club_lottery&jd_car_exchange
     - timer: #东东农场 #东东萌宠 #口袋书店 #京喜农场 #美丽研究院
         parameters:
           name: fruit_pet_bookshop_jxnc_beauty
@@ -40,12 +40,12 @@ inputs:
           cronExpression: "0 3 */1 * * * *"
           enable: true
           argument: jd_joy_feedPets&jd_joy&jd_moneyTree&jd_plantBean&jd_dreamFactory&jd_jdfactory
-    - timer: #宠汪汪偷好友积分与狗粮 #签到领现金 #点点券 #东东小窝
+    - timer: #宠汪汪积分兑换京豆 #宠汪汪偷好友积分与狗粮 #签到领现金 #点点券 #东东小窝
         parameters:
-          name: joysteal_cash_necklace_smallhome
+          name: joyreward_joysteal_cash_necklace_smallhome
           cronExpression: "0 0 0-16/8,20 * * * *"
           enable: true
-          argument: jd_joy_steal&jd_cash&jd_necklace&jd_small_home
+          argument: jd_joy_reward&jd_joy_steal&jd_cash&jd_necklace&jd_small_home
     - timer: #京东全民开红包 #进店领豆 #取关京东店铺商品 #京东抽奖机 #京东汽车 #京东秒秒币 #小鸽有礼2
         parameters:
           name: redPacket_shop_unsubscribe_lotteryMachine_car_ms_xg
