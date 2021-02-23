@@ -2,7 +2,7 @@
 
 ## 特别声明: 
 
-* 请大家不要fork
+# * 请大家不要fork
 
 * 本仓库发布的JD-haoyangmao项目中涉及的任何解锁和解密分析脚本，仅用于测试和学习研究，禁止用于商业用途，不能保证其合法性，准确性，完整性和有效性，请根据情况自行判断.
 
@@ -21,7 +21,7 @@
  **您必须在下载后的24小时内从计算机或手机中完全删除以上内容.**  </br>
 > ***您使用或者复制了本仓库且本人制作的任何脚本，则视为`已接受`此声明，请仔细阅读*** 
 
-## 一丶使用教程
+## 一丶 githubAction 使用教程
 
 1. [按照这个教程进行 reposync](https://thoughts.teambition.com/share/6013bd119ff53400460b97f6#title=如何使用Github挂京东水果等)
 2. 再在`Settings`-`Secrets`里面添加`JD_COOKIE`
@@ -37,14 +37,8 @@
 
 ## 二丶Docker使用教程
 
-1.[Docker2 V3 gitee库使用教程](backup/docker/Docker2.md)
+1. [Docker2 V3 gitee库使用教程](backup/docker/Docker2.md)
+2. 如果你感觉上面的学不会，那么点[这里](backup/docker/Docker2.1.md)可以走捷径
 
-2.如果你感觉上面的学不会，那么点[这里](backup/docker/Docker2.1.md)可以走捷径
-
-
-## 三丶联系我们
-
-1.[电报通知群](https://t.me/JD_DX1005)
-
-2.[企鹅群](https://jq.qq.com/?_wv=1027&k=0GtVKLzh)
-
+## 三丶云函数部署教程
+1. GithubAction快速部署到云函数[教程](TecentScf/tecentscf.md)
