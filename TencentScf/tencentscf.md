@@ -1,6 +1,6 @@
 ## Github Action 部署
 
-### 由[@ZFeng3242](https://github.com/ZFeng3242/)整理      参考至[lxk0301](https://gitee.com/lxk0301/)
+### 由@[ZFeng3242](https://github.com/ZFeng3242/)整理      参考至@[lxk0301](https://gitee.com/lxk0301/)
 ### !注意：环境变量最大不能超过4kb，故不能添加过多的ck，如需放置相当数量的ck，请自行更改`JD-Cookie`与`TENCENT_FUNCTION_NAME`后创建新的云函数放置
 
 
