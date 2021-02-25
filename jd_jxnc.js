@@ -213,10 +213,14 @@ function TotalBean() {
                     if (data) {
                         data = JSON.parse(data);
                         if (data['retcode'] === 13) {
-                            $.isLogin = false; //cookie过期
-                            return
-                        }
-                        $.nickName = data['base'].nickname;
+              $.isLogin = false; //cookie过期
+              return
+            }
+            if (data['retcode'] === 0) {
+              $.nickName = data['base'].nickname;
+            } else {
+              $.nickName = $.UserName
+            }
                     } else {
                         console.log(`京东服务器返回空数据`)
                     }
