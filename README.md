@@ -49,6 +49,6 @@
 
 ## 特别感谢（排名不分先后）
 ### 脚本作者：
-### [@lxk0301](https://gitee.com/lxk0301) 
-### [@i-chenzhe](https://github.com/i-chenzhe) 
-### [@whyour](https://github.com/whyour) 
+[@lxk0301](https://gitee.com/lxk0301) 
+[@i-chenzhe](https://github.com/i-chenzhe) 
+[@whyour](https://github.com/whyour) 
