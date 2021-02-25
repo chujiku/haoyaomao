@@ -1,4 +1,8 @@
-/*
+if (data['retcode'] === 0) {
+              $.nickName = data['base'].nickname;
+            } else {
+              $.nickName = $.UserName
+            }/*
 种豆得豆 脚本更新地址：https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jd_plantBean.js
 更新时间：2021-1-18
 已支持IOS京东双账号,云端N个京东账号
@@ -682,7 +686,11 @@ function TotalBean() {
               $.isLogin = false; //cookie过期
               return
             }
-            $.nickName = data['base'].nickname;
+            if (data['retcode'] === 0) {
+              $.nickName = data['base'].nickname;
+            } else {
+              $.nickName = $.UserName
+            }
           } else {
             console.log(`京东服务器返回空数据`)
           }
