@@ -3,16 +3,8 @@
 活动入口：app首页-美妆馆-底部中间按钮
 添加好脚本以后如果报错找不到ws模块请先cd 到scripts里 npm install ws
 
-新手写脚本，难免有bug，能用且用。
-多谢 whyour 大佬 帮忙修改
-
-脚本内置了一个给作者任务助力的网络请求，默认开启，如介意请自行关闭。
-助力活动链接： https://h5.m.jd.com/babelDiy/Zeus/4ZK4ZpvoSreRB92RRo8bpJAQNoTq/index.html
-参数 helpAuthor = false
-
-更新地址：https://raw.githubusercontent.com/i-chenzhe/qx/main/jd_mlyjy.js
-脚本仅支持Node环境，手机上的均不支持。
-cron 23 9,13,20 * * *
+脚本作者：i-chenzhe
+0 0,9,13,20 * * *
 */
 const $ = new Env('美丽颜究院');
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require("constants");
@@ -437,7 +429,7 @@ function yjy() {
       if ($.bean > 0) {
         await showMsg();
       }
-      
+
       ws.close();
       await $.wait(2000);
       resolve();
