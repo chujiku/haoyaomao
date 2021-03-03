@@ -320,10 +320,10 @@ async function businessCircleActivity() {
     if (joinStatus === 0) {
       if (joinPkTeam === 'true') {
         await getTeam();
-        console.log(`\n注：PK会在每天的七点自动随机加入LXK9301创建的队伍\n`)
+        console.log(`\n注：PK会在每天的七点自动随机加入ZFeng3242创建的队伍\n`)
         await updatePkActivityId();
-        if (!$.updatePkActivityIdRes) await updatePkActivityIdCDN('https://gitee.com/ZFeng3242/updateTeam/raw/master/jd_updateTeam.json');
-        if (!$.updatePkActivityIdRes) await updatePkActivityIdCDN('https://cdn.jsdelivr.net/gh/ZFeng3242/updateTeam@master/jd_updateTeam.json');
+        if (!$.updatePkActivityIdRes) await updatePkActivityIdCDN('https://github.com/ZFeng3242/updateTeam/raw/master/shareCodes/jd_updateTeam.json');
+        if (!$.updatePkActivityIdRes) await updatePkActivityIdCDN('https://cdn.jsdelivr.net/gh/ZFeng3242/updateTeam@master/shareCodes/jd_updateTeam.json');
         console.log(`\nupdatePkActivityId[pkActivityId]:::${$.updatePkActivityIdRes.pkActivityId}`);
         console.log(`\n京东服务器返回的[pkActivityId] ${pkActivityId}`);
         if ($.updatePkActivityIdRes && ($.updatePkActivityIdRes.pkActivityId === pkActivityId)) {
@@ -456,11 +456,11 @@ async function businessCircleActivity() {
       }
     }
   } else if (businessCirclePKDetailRes && businessCirclePKDetailRes.data.bizCode === 206) {
-    console.log(`您暂未加入商圈,现在给您加入LXK9301的商圈`);
+    console.log(`您暂未加入商圈,现在给您加入ZFeng3242的商圈`);
     const joinBusinessCircleRes = await smtg_joinBusinessCircle(myCircleId);
     console.log(`参加商圈结果：${JSON.stringify(joinBusinessCircleRes)}`)
     if (joinBusinessCircleRes.data.bizCode !== 0) {
-      console.log(`您加入LXK9301的商圈失败，现在给您随机加入一个商圈`);
+      console.log(`您加入ZFeng3242的商圈失败，现在给您随机加入一个商圈`);
       const BusinessCircleList = await smtg_getBusinessCircleList();
       if (BusinessCircleList.data.bizCode === 0) {
         const { businessCircleVOList } = BusinessCircleList.data.result;
@@ -847,7 +847,7 @@ function smtg_sellMerchandise(body) {
   })
 }
 //新版东东超市
-function updatePkActivityId(url = 'https://raw.githubusercontent.com/ZFeng3242/updateSupermarketTeam/master/jd_updateTeam.json') {
+function updatePkActivityId(url = 'https://raw.githubusercontent.com/ZFeng3242/updateTeam/master/shareCodes/jd_updateTeam.json') {
   return new Promise(resolve => {
     $.get({url}, async (err, resp, data) => {
       try {
@@ -1573,7 +1573,7 @@ function TotalBean() {
 function getTeam() {
   return new Promise(async resolve => {
     $.getTeams = [];
-    $.get({url: `https://raw.githubusercontent.com/ZFeng3242/updateSupermarketTeam/master/jd_updateTeam.json`, timeout: 100000}, (err, resp, data) => {
+    $.get({url: `https://raw.githubusercontent.com/ZFeng3242/updateTeam/master/shareCodes/jd_updateTeam.json`, timeout: 100000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
