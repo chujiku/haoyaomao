@@ -1,32 +1,17 @@
 /*
- * @Author: LXK9301 https://github.com/LXK9301
- * @Date: 2020-08-16 18:54:16
- * @Last Modified by: LXK9301
- * @Last Modified time: 2021-1-29 21:22:37
- */
-/*
 东东超市
 活动入口：京东APP首页-京东超市-底部东东超市
 Some Functions Modified From https://github.com/Zero-S1/JD_tools/blob/master/JD_superMarket.py
 支持京东双账号
-东东超市兑换奖品请使用此脚本 https://gitee.com/lxk0301/jd_scripts/raw/master/jd_blueCoin.js
-脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
-=================QuantumultX==============
-[task_local]
-#东东超市
-11 * * * * https://gitee.com/lxk0301/jd_scripts/raw/master/jd_superMarket.js, tag=东东超市, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxc.png, enabled=true
-===========Loon===============
-[Script]
-cron "11 * * * *" script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_superMarket.js,tag=东东超市
-=======Surge===========
-东东超市 = type=cron,cronexp="11 * * * *",wake-system=1,timeout=3600,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_superMarket.js
-==============小火箭=============
-东东超市 = type=cron,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_superMarket.js, cronexpr="11 * * * *", timeout=3600, enable=true
+脚本内置了一个给作者任务助力的网络请求，默认开启，如介意请自行关闭。
+参数 helpAuthor = false
+脚本作者：lxk0301
  */
 const $ = new Env('东东超市');
 //Node.js用户请在jdCookie.js处填写京东ck;
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', jdSuperMarketShareArr = [], notify, newShareCodes;
+
 let jdNotify = true;//用来是否关闭弹窗通知，true表示关闭，false表示开启。
 let superMarketUpgrade = true;//自动升级,顺序:解锁升级商品、升级货架,true表示自动升级,false表示关闭自动升级
 let businessCircleJump = true;//小于对方300热力值自动更换商圈队伍,true表示运行,false表示禁止
@@ -64,7 +49,6 @@ let shareCodes = [ // IOS本地脚本用户这个列表填入你要助力的好�
       console.log(`\n开始【京东账号${$.index}】${$.nickName || $.UserName}\n`);
       if (!$.isLogin) {
         $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
-
         if ($.isNode()) {
           await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
         }
@@ -73,9 +57,11 @@ let shareCodes = [ // IOS本地脚本用户这个列表填入你要助力的好�
       message = '';
       subTitle = '';
       //await shareCodesFormat();//格式化助力码
+
+      
+
       await jdSuperMarket();
       await showMsg();
-      if (helpAu === true) await helpAuthor();
       // await businessCircleActivity();
     }
   }
@@ -87,7 +73,7 @@ let shareCodes = [ // IOS本地脚本用户这个列表填入你要助力的好�
       $.done();
     })
 async function jdSuperMarket() {
-   try {
+  try {
     await receiveGoldCoin();//收金币
     await businessCircleActivity();//商圈活动
     await receiveBlueCoin();//收蓝币（小费）
@@ -110,6 +96,7 @@ async function jdSuperMarket() {
     $.logErr(e)
   }
 }
+
 function showMsg() {
   $.log(`【京东账号${$.index}】${$.nickName}\n${message}`);
   jdNotify = $.getdata('jdSuperMarketNotify') ? $.getdata('jdSuperMarketNotify') : jdNotify;
@@ -323,18 +310,17 @@ async function businessCircleActivity() {
 
     if (joinStatus === 0) {
       if (joinPkTeam === 'true') {
-        console.log(`\n注：PK会在每天的七点自动随机加入ZFeng3242创建的队伍\n`)
-        await updatePkActivityIdCDN('https://github.com/ZFeng3242/updateTeam/raw/master/shareCodes/jd_updateTeam.json');
+        console.log(`\n注：PK会在每天的七点自动随机加入LXK9301创建的队伍\n`)
+        await updatePkActivityIdCDN('https://raw.githubusercontent.com/ZFeng3242/updateTeam/raw/master/shareCodes/jd_updateTeam.json');
         console.log(`\nupdatePkActivityId[pkActivityId]:::${$.updatePkActivityIdRes && $.updatePkActivityIdRes.pkActivityId}`);
         console.log(`\n京东服务器返回的[pkActivityId] ${pkActivityId}`);
         if ($.updatePkActivityIdRes && ($.updatePkActivityIdRes.pkActivityId === pkActivityId)) {
           await getTeam();
           let Teams = []
           Teams = $.updatePkActivityIdRes['Teams'] || Teams;
-           if ($.getTeams && $.getTeams.length) {
+          if ($.getTeams && $.getTeams.length) {
             Teams = [...Teams, ...$.getTeams.filter(item => item['pkActivityId'] === `${pkActivityId}`)];
-          }
-          const randomNum = randomNumber(0, Teams.length);
+          }          const randomNum = randomNumber(0, Teams.length);
 
           const res = await smtg_joinPkTeam(Teams[randomNum] && Teams[randomNum].teamId, Teams[randomNum] && Teams[randomNum].inviteCode, pkActivityId);
           if (res && res.data.bizCode === 0) {
@@ -460,11 +446,11 @@ async function businessCircleActivity() {
       }
     }
   } else if (businessCirclePKDetailRes && businessCirclePKDetailRes.data.bizCode === 206) {
-    console.log(`您暂未加入商圈,现在给您加入ZFeng3242的商圈`);
+    console.log(`您暂未加入商圈,现在给您加入LXK9301的商圈`);
     const joinBusinessCircleRes = await smtg_joinBusinessCircle(myCircleId);
     console.log(`参加商圈结果：${JSON.stringify(joinBusinessCircleRes)}`)
     if (joinBusinessCircleRes.data.bizCode !== 0) {
-      console.log(`您加入ZFeng3242的商圈失败，现在给您随机加入一个商圈`);
+      console.log(`您加入LXK9301的商圈失败，现在给您随机加入一个商圈`);
       const BusinessCircleList = await smtg_getBusinessCircleList();
       if (BusinessCircleList.data.bizCode === 0) {
         const { businessCircleVOList } = BusinessCircleList.data.result;
@@ -1571,7 +1557,11 @@ function TotalBean() {
 function getTeam() {
   return new Promise(async resolve => {
     $.getTeams = [];
-    $.get({url: `https://raw.githubusercontent.com/ZFeng3242/updateTeam/master/shareCodes/jd_updateTeam.json`, timeout: 100000}, (err, resp, data) => {
+    $.get({url: "https://github.com/ZFeng3242/updateTeam/raw/master/shareCodes/jd_updateTeam.json",
+           headers: {
+        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
+    }
+}, async (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
