@@ -9,7 +9,7 @@
 统计昨日京豆的变化情况，包括收入，支出，以及显示当前京豆数量,目前小问题:下单使用京豆后,退款重新购买会出现异常
 网页查看地址 : https://bean.m.jd.com/beanDetail/index.action?resourceValue=bean
 支持京东双账号
-脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
+脚本兼容:QuantumultX,Surge,Loon,JSBox,Node.js
 ============QuantumultX==============
 [task_local]
 #京豆变动通知
@@ -28,6 +28,7 @@ const $ = new Env('京豆变动通知');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
+let allMessage = '';
 
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '';
@@ -81,6 +82,9 @@ if ($.isNode()) {
     }
   }
   
+  if ($.isNode()&& allMessage) {
+    await notify.sendNotify(`${$.name}`, `${allMessage}`, { url: `https://bean.m.jd.com/beanDetail/index.action?resourceValue=bean` })
+  }
 })()
     .catch((e) => {
       $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
@@ -90,9 +94,10 @@ if ($.isNode()) {
     })
 async function showMsg() {
   if ($.errorMsg) return
-  if ($.isNode()) {
-    await notify.sendNotify(`${$.name} - 账号${$.index} - ${$.nickName}`, `账号${$.index}：${$.nickName || $.UserName}\n账户等级：${$.levelName}\n昨日收入：${$.incomeBean}京豆 🐶\n昨日支出：${$.expenseBean}京豆 🐶\n当前京豆：${$.beanCount}京豆 🐶${$.message}\n当前红包：${$.balance}元🧧\n即将过期红包：${$.expiredBalance}元🧧`, { url: `https://bean.m.jd.com/beanDetail/index.action?resourceValue=bean` })
-  }
+  allMessage += `账号${$.index}：${$.nickName || $.UserName}\n昨日收入：${$.incomeBean}京豆 🐶\n昨日支出：${$.expenseBean}京豆 🐶\n当前京豆：${$.beanCount}京豆 🐶${$.message}${$.index !== cookiesArr.length ? '\n\n' : ''}`;
+  // if ($.isNode()) {
+  //   await notify.sendNotify(`${$.name} - 账号${$.index} - ${$.nickName}`, `账号${$.index}：${$.nickName || $.UserName}\n昨日收入：${$.incomeBean}京豆 🐶\n昨日支出：${$.expenseBean}京豆 🐶\n当前京豆：${$.beanCount}京豆 🐶${$.message}`, { url: `https://bean.m.jd.com/beanDetail/index.action?resourceValue=bean` })
+  // }
   $.msg($.name, '', `账号${$.index}：${$.nickName || $.UserName}\n账户等级：${$.levelName}\n昨日收入：${$.incomeBean}京豆 🐶\n昨日支出：${$.expenseBean}京豆 🐶\n当前京豆：${$.beanCount}京豆 🐶${$.message}\n当前红包：${$.balance}元🧧\n即将过期红包：${$.expiredBalance}元🧧`, {"open-url": "https://bean.m.jd.com/beanDetail/index.action?resourceValue=bean"});
 }
 async function bean() {
