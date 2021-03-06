@@ -4,7 +4,7 @@
 
 |    Name     | 归属 | 属性 | 说明                                                         |
 | :---------: | :--: | ---- | ------------------------------------------------------------ |
-| `JD_COOKIE` | 京东 | 必须 | 京东cookie,多个账号的cookie使用`&`隔开或者换行。具体获取参考[浏览器获取京东cookie教程](./backUp/GetJdCookie.md) 或者 [插件获取京东cookie教程](./backUp/GetJdCookie2.md) |
+| `JD_COOKIE` | 京东 | 必须 | 京东cookie,多个账号的cookie使用`&`隔开或者换行。具体获取参考[浏览器获取京东cookie教程](https://thoughts.teambition.com/share/600bfeb863d4740047ac9ca9#title=%E5%A6%82%E4%BD%95%E6%8A%93%E5%8F%96JD-Cookie) 
 
 ##### 京东隐私安全 环境变量
 
