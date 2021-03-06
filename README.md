@@ -55,4 +55,4 @@
 *  [@i-chenzhe](https://github.com/i-chenzhe) 
 *  [@whyour](https://github.com/whyour) 
 ### 修改帮助：
-* [@shuye73](https://github.com/shuye73)
+* [@wuzhi01](https://github.com/wuzhi01)
