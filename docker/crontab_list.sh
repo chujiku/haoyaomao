@@ -18,12 +18,12 @@
 30,31 20-23/1 * * * node /scripts/jd_live_redrain.js >> /scripts/logs/jd_live_redrain.log 2>&1
 # 母婴跳一跳（22-27）
 5 0,12,18 22-27 2 * node /scripts/jd_jump_jump.js >> /scripts/logs/jd_jump_jump.log 2>&1
+#环球挑战赛 第二季(活动时间：2021-03-08 至 2021-03-31)
+35 6,22 * * * node /scripts/jd_global.js >> /scripts/logs/jd_global.log 2>&1
 #京东国际盲盒
 5 7,12,23 * * * node /scripts/jd_global_mh.js >> /scripts/logs/jd_global_mh.log 2>&1
 # 小魔方
 10 8,21 1-8/1 3 * node /scripts/jd_xmf.js >> /scripts/logs/jd_xmf.log 2>&1
-# 京小兑
-30 9 * * * node /scripts/jd_jxd.js >> /scripts/logs/jd_jxd.log 2>&1
 ##############长期活动##############
 # 签到
 0 0,18 * * * cd /scripts && node jd_bean_sign.js >> /scripts/logs/jd_bean_sign.log 2>&1
@@ -121,8 +121,8 @@
 22 0,12,18 * * *  node /scripts/jd_lotteryMachine.js >> /scripts/logs/jd_lotteryMachine.log 2>&1
 #监控crazyJoy分红
 10 12 * * * node /scripts/jd_crazy_joy_bonus.js >> /scripts/logs/jd_crazy_joy_bonus.log 2>&1
-# 京东摇一摇
-0 1,9,17 * * *   node /scripts/jd_shake.js >> /scripts/logs/jd_shake.log 2>&1
+# 京小兑
+30 9 * * * node /scripts/jd_jxd.js >> /scripts/logs/jd_jxd.log 2>&1
 # 删除优惠券(默认注释，如需要自己开启，如有误删，已删除的券可以在回收站中还原，慎用)
 #20 9 * * 6 node /scripts/jd_delCoupon.js >> /scripts/logs/jd_delCoupon.log 2>&1
 # 京东试用（默认注释，请配合取关脚本使用）
