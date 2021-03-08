@@ -1,12 +1,12 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: 京东国际🌍
+name: 环球挑战赛🌍
 
 on:
     workflow_dispatch:
     schedule:
-        - cron: "0 3,9,22 * * *"
+        - cron: "0 9,12,20,21 8-31 3 *"
     watch:
         types: [started]
     repository_dispatch:
@@ -25,7 +25,7 @@ jobs:
             - name: npm install
               run: |
                   npm install
-            - name: "运行 【京东国际🌍】"
+            - name: "运行 【环球挑战赛🌍】"
               run: |
                   node onlyOneExecute.js
               env:
