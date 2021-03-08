@@ -20,6 +20,8 @@
 5 0,12,18 22-27 2 * node /scripts/jd_jump_jump.js >> /scripts/logs/jd_jump_jump.log 2>&1
 #京东国际盲盒
 5 7,12,23 * * * node /scripts/jd_global_mh.js >> /scripts/logs/jd_global_mh.log 2>&1
+# 小魔方
+10 8,21 1-8/1 3 * node /scripts/jd_xmf.js >> /scripts/logs/jd_xmf.log 2>&1
 # 京小兑
 30 9 * * * node /scripts/jd_jxd.js >> /scripts/logs/jd_jxd.log 2>&1
 ##############长期活动##############
