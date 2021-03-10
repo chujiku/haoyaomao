@@ -2,6 +2,8 @@ name: 部署到腾讯云函数
 
 on:
   workflow_dispatch:
+  schedule:
+        - cron: "0 0 0,8,16 * * ? *"
 
 jobs:
   build:
