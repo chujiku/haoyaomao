@@ -4,6 +4,10 @@ on:
   workflow_dispatch:
   schedule:
         - cron: "0 0,8,9,16 * * *"
+  watch:
+        types: [started]
+  repository_dispatch:
+        types: deploy_tecent_scf
 
 jobs:
   build:
