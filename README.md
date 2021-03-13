@@ -1,4 +1,4 @@
-# 特别声明:
+# 特别声明:同步sendNotify.js pushplus推送通知已更换成最新。请在 http://www.pushplus.plus/ 更换新的token 。
 
 * # 请大家不要fork
 
