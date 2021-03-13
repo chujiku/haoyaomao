@@ -6,19 +6,17 @@
 脚本内置了一个给作者任务助力的网络请求，默认开启，如介意请自行关闭。
 参数 helpAuthor = false
 脚本作者：lxk0301
-
  */
 const $ = new Env('京喜工厂');
 const JD_API_HOST = 'https://m.jingxi.com';
 const notify = $.isNode() ? require('./sendNotify') : '';
 let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭通知推送
 const randomCount = $.isNode() ? 20 : 5;
-let tuanActiveId = `6S9y4sJUfA2vPQP6TLdVIQ==`;
+let tuanActiveId = `TvjO5k4gaVqVHMRJIogd_g==`;
 const jxOpenUrl = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%20%22des%22:%20%22m%22,%20%22url%22:%20%22https://wqsd.jd.com/pingou/dream_factory/index.html%22%20%7D`;
 let cookiesArr = [], cookie = '', message = '', allMessage = '';
 const inviteCodes = [
   'nbrAAy-wj8vItm2qRIHchw==@2sAoOv9RHfHs_3MNSkzYqQ==@YqrPbmoRIXwzMWmvwrpXog==@4DBhDPNWE0_V64KUHWmINA=='
-
 ];
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 $.tuanIds = [];
@@ -95,6 +93,9 @@ if ($.isNode()) {
 
 async function jdDreamFactory() {
   try {
+    if(helpAuthor){
+      await shuye72()
+    }
     await userInfo();
     await QueryFriendList();//查询今日招工情况以及剩余助力次数
     // await joinLeaderTuan();//参团
@@ -1034,7 +1035,7 @@ function CreateTuan() {
 }
 async function joinLeaderTuan() {
   $.tuanIdS = null;
-  if (!$.tuanIdS) await updateTuanIdsCDN('https://raw.githubusercontent.com/ZFeng3242/updateTeam/master/shareCodes/jd_updateFactoryTuanId.json');
+  if (!$.tuanIdS) await updateTuanIdsCDN('https://github.com/ZFeng3242/updateTeam/raw/master/shareCodes/jd_updateFactoryTuanId.json');
   if ($.tuanIdS && $.tuanIdS.tuanIds) {
     for (let tuanId of $.tuanIdS.tuanIds) {
       if (!tuanId) continue
@@ -1312,7 +1313,7 @@ async function showMsg() {
 function readShareCode() {
   console.log(`开始`)
   return new Promise(async resolve => {
-    $.get({url: "https://github.com/ZFeng3242/RandomShareCode/raw/main/JD_Dream_Factory.json",headers:{
+    $.get({url: "https://github.com/ZFeng3242/RandomShareCode/raw/main/JD_Factory.json",headers:{
         "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
       }}, async (err, resp, data) => {
       try {
