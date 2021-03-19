@@ -23,6 +23,8 @@
 0 0,14 * * * node /scripts/jd_xtg.js >> /scripts/logs/jd_xtg.log 2>&1
 #母婴跳一跳
 10 3,15 17-24 3 * node /scripts/jd_jump_jump.js >> /scripts/logs/jd_jump_jump.log 2>&1
+#5G超级盲盒 活动时间：2021-03-19到2021-04-30
+0 0,1-23/4 * * * node /scripts/jd_mohe.js >> /scripts/logs/jd_mohe.log 2>&1
 
 ##############长期活动##############
 # 签到
