@@ -2,7 +2,7 @@
 5G超级盲盒，可抽奖获得京豆，建议在凌晨0点时运行脚本，白天抽奖基本没有京豆，4小时运行一次收集热力值
 活动地址: https://isp5g.m.jd.com
 活动时间：2021-03-19到2021-04-30
-更新时间：2021-03-19
+更新时间：2021-03-19 18:35
 脚本兼容: QuantumultX, Surge,Loon, JSBox, Node.js
 =================================Quantumultx=========================
 [task_local]
@@ -70,30 +70,26 @@ $.shareId = ["17181812-2f1c-45de-bbec-d32127660c62","43872610-81dc-4812-b532-8b7
       ])
       await taskList();
       await getAward();//抽奖
-      //ios端22点通知一次
-      if (new Date().getHours() === 22) {
-        $.msg($.name, '', `【京东账号一】${$.UserName}\n任务已做完.\n 抽奖详情查看 https://isp5g.m.jd.com\n`, {"open-url": "https://isp5g.m.jd.com"});
-      }
     }
   }
+  //ios端22点通知一次
+  if (new Date().getHours() === 22) {
+    $.msg($.name, '', `任务已做完\n抽奖详情查看 https://isp5g.m.jd.com`, {"open-url": "https://isp5g.m.jd.com"});
+  }
+
   for (let v = 0; v < cookiesArr.length; v++) {
     cookie = cookiesArr[v];
     $.index = v + 1;
     $.UserName = decodeURIComponent(cookie.match(/pt_pin=(.+?);/) && cookie.match(/pt_pin=(.+?);/)[1]);
-    console.log(`自己账号内部互助\n\n`);
+    console.log(`\n\n自己账号内部互助`);
     for (let item of $.shareId) {
-      console.log(`账号${$.index}${$.UserName}开始给 ${item}进行助力`)
+      console.log(`账号 ${$.index} ${$.UserName} 开始给 ${item}进行助力`)
       const res = await addShare(item);
       if (res && res['code'] === 2005) {
         console.log(`次数已用完，跳出助力`)
         break
       }
     }
-    // console.log(`如有剩下的机会，助力作者\n\n`);
-    // for (let index = 0; index < starID.length; index++) {
-    //   $.activeId = starID[index];
-    //   await doSupport(shareID[index]);
-    // }
   }
 })()
     .catch((e) => {
@@ -159,7 +155,7 @@ function addShare(shareId) {
           console.log(`${JSON.stringify(err)}`)
           console.log(`${$.name} API请求失败，请检查网路重试`)
         } else {
-          console.log(`\n助力结果${data}`)
+          console.log(`助力结果${data}`)
           data = JSON.parse(data);
           if (data['code'] === 200) {
             // console.log(`\n【京东账号${$.index}（${$.nickName || $.UserName}）助力好友 【${data['data']}】 成功\n`);
@@ -251,7 +247,6 @@ function taskList() {
       try {
         // console.log('homeGoBrowse', data)
         data = JSON.parse(data);
-        console.log(`请继续等待,正在做任务,不要退出哦`)
         // console.log(`成功领取${data.data}热力值`)
         if (data.code === 200) {
           const { task4, task6, task5, task2, task1 } = data.data;
@@ -268,13 +263,16 @@ function taskList() {
             await strollShop(task2.shopId);
             await taskCoin(task2.type);
           }
-          // if (task6.finishNum < task6.totalNum) {
-          //   await strollMember(task6.venderId);
-          //   await taskCoin(task6.type);
+          // if (task5.finishNum < task5.totalNum) {
+          //   console.log(`\n\n分享好友助力 ${task5.finishNum}/${task5.totalNum}\n\n`)
+          // } else {
+          //   console.log(`\n\n分享好友助力 ${task5.finishNum}/${task5.totalNum}\n\n`)
           // }
           if (task4.state === 2 && task1.state === 2 && task2.state === 2) {
-            console.log('taskList的任务全部做完了---')
+            console.log('\n\n----taskList的任务全部做完了---\n\n')
+            console.log(`分享好友助力 ${task5.finishNum}/${task5.totalNum}\n\n`)
           } else {
+            console.log(`请继续等待,正在做任务,不要退出哦`)
             await taskList();
           }
         }
@@ -460,17 +458,18 @@ function shareUrl() {
         "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0")
       }
     }
-    $.get(options, (err, resp, data) => {
+    $.get(options, async (err, resp, data) => {
       try {
-        console.log('好友邀请码', data)
+        // console.log('好友邀请码', data)
         data = JSON.parse(data);
         if (data['code'] === 5000) {
-          console.log(`提示任务已过期，重新运行一次脚本即可获取好友邀请码`)
+          console.log(`重新运行一次脚本即可获取好友邀请码`)
         }
         // console.log('homeGoBrowse', data)
         if (data['code'] === 200) {
           $.shareId.push(data['data']);
           console.log(`\n【京东账号${$.index}（${$.nickName || $.UserName}）的${$.name}好友互助码】${data['data']}\n`);
+
         }
       } catch (e) {
         $.logErr(e, resp);
