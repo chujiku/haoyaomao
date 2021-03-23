@@ -1,22 +1,43 @@
 /*
 京东京喜工厂
-更新时间：2021-1-27
-活动入口 :京东APP->游戏与互动->查看更多->京喜工厂
+更新时间：2021-3-23 修复做任务、收集电力出现火爆，不能完成任务
+重新计算h5st验证
+参考自 ：https://www.orzlee.com/web-development/2021/03/03/lxk0301-jingdong-signin-scriptjingxi-factory-solves-the-problem-of-unable-to-signin.html
+活动入口：京东APP-游戏与互动-查看更多-京喜工厂
 或者: 京东APP首页搜索 "玩一玩" ,造物工厂即可
-脚本内置了一个给作者任务助力的网络请求，默认开启，如介意请自行关闭。
-参数 helpAuthor = false
-脚本作者：lxk0301
+
+已支持IOS双京东账号,Node.js支持N个京东账号
+脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
+============Quantumultx===============
+[task_local]
+#京喜工厂
+10 * * * * https://gitee.com/lxk0301/jd_scripts/raw/master/jd_dreamFactory.js, tag=京喜工厂, img-url=https://github.com/58xinian/icon/raw/master/jdgc.png, enabled=true
+
+================Loon==============
+[Script]
+cron "10 * * * *" script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_dreamFactory.js,tag=京喜工厂
+
+===============Surge=================
+京喜工厂 = type=cron,cronexp="10 * * * *",wake-system=1,timeout=3600,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_dreamFactory.js
+
+============小火箭=========
+京喜工厂 = type=cron,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_dreamFactory.js, cronexpr="10 * * * *", timeout=3600, enable=true
+
  */
 const $ = new Env('京喜工厂');
 const JD_API_HOST = 'https://m.jingxi.com';
+const helpAu = true; //帮作者助力 免费拿活动
 const notify = $.isNode() ? require('./sendNotify') : '';
 let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭通知推送
 const randomCount = $.isNode() ? 20 : 5;
-let tuanActiveId = `TvjO5k4gaVqVHMRJIogd_g==`;
+let tuanActiveId = `6S9y4sJUfA2vPQP6TLdVIQ==`;
 const jxOpenUrl = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%20%22des%22:%20%22m%22,%20%22url%22:%20%22https://wqsd.jd.com/pingou/dream_factory/index.html%22%20%7D`;
 let cookiesArr = [], cookie = '', message = '', allMessage = '';
 const inviteCodes = [
-  'nbrAAy-wj8vItm2qRIHchw==@2sAoOv9RHfHs_3MNSkzYqQ==@YqrPbmoRIXwzMWmvwrpXog==@4DBhDPNWE0_V64KUHWmINA=='
+  'V5LkjP4WRyjeCKR9VRwcRX0bBuTz7MEK0-E99EJ7u0k=@0WtCMPNq7jekehT6d3AbFw==',
+  "gB99tYLjvPcEFloDgamoBw==@7dluIKQMp0bySgcr8AqFgw==",
+  '-OvElMzqeyeGBWazWYjI1Q==',
+  'GFwo6PntxDHH95ZRzZ5uAg=='
 ];
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 $.tuanIds = [];
@@ -50,6 +71,7 @@ if ($.isNode()) {
       $.friendList = [];
       $.canHelpFlag = true;//能否助力朋友
       await TotalBean();
+      console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
       if (!$.isLogin) {
         $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
 
@@ -63,7 +85,6 @@ if ($.isNode()) {
   }
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
-
       cookie = cookiesArr[i];
       $.isLogin = true;
       await TotalBean();
@@ -98,6 +119,7 @@ async function jdDreamFactory() {
     // await joinLeaderTuan();//参团
     await helpFriends();
     if (!$.unActive) return
+    // await collectElectricity()
     await getUserElectricity();
     await taskList();
     await investElectric();
@@ -108,6 +130,7 @@ async function jdDreamFactory() {
     await QueryAllTuan();
     await exchangeProNotify();
     await showMsg();
+    if (helpAu === true) await helpAuthor();
   } catch (e) {
     $.logErr(e)
   }
@@ -121,13 +144,11 @@ function collectElectricity(facId = $.factoryId, help = false, master) {
     // if (help && master) {
     //   url = `/dreamfactory/generator/CollectCurrentElectricity?zone=dream_factory&factoryid=${facId}&master=${master}&sceneval=2&g_login_type=1`;
     // }
-      let body = `factoryid=${facId}&apptoken=&pgtimestamp=&phoneID=&doubleflag=1`;
-      if (help && master) {
+    let body = `factoryid=${facId}&apptoken=&pgtimestamp=&phoneID=&doubleflag=1`;
+    if (help && master) {
       body += `factoryid=${facId}&master=${master}`;
     }
-    const options = taskurl(`generator/CollectCurrentElectricity`, body)
-    options['url'] += `&_stk=${encodeURIComponent("_time,apptoken,doubleflag,factoryid,pgtimestamp,phoneID,zone")}`;
-    $.get(options, (err, resp, data) => {
+    $.get(taskurl(`generator/CollectCurrentElectricity`, body, `_time,apptoken,doubleflag,factoryid,pgtimestamp,phoneID,timeStamp,zone`), (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -552,7 +573,7 @@ function userInfo() {
                 }
                 console.log(`当前电力：${data.user.electric}`)
                 console.log(`当前等级：${data.user.currentLevel}`)
-                console.log(`\n【京东账号${$.index}（${$.nickName || $.UserName}）的${$.name}好友互助码】${data.user.encryptPin}`);
+                console.log(`\n【京东账号${$.index}（${$.UserName}）的${$.name}好友互助码】${data.user.encryptPin}`);
                 console.log(`已投入电力：${production.investedElectric}`);
                 console.log(`所需电力：${production.needElectric}`);
                 console.log(`生产进度：${((production.investedElectric / production.needElectric) * 100).toFixed(2)}%`);
@@ -912,24 +933,31 @@ async function tuanActivity() {
     }
   }
 }
+async function joinLeaderTuan() {
+  $.tuanIdS = null;
+  if (!$.tuanIdS) await updateTuanIdsCDN('https://githu.com/ZFeng3242/updateTeam/raw/main/shareCodes/jd_updateFactoryTuanId.json');
+  if ($.tuanIdS && $.tuanIdS.tuanIds) {
+    for (let tuanId of $.tuanIdS.tuanIds) {
+      if (!tuanId) continue
+      await JoinTuan(tuanId);
+    }
+  }
+  $.tuanIdS = null;
+  if (!$.tuanIdS) await updateTuanIdsCDN('https://github.com/ZFeng3242/updateTeam/raw/master/shareCodes/jd_updateFactoryTuanId.json');
+  if ($.tuanIdS && $.tuanIdS.tuanIds) {
+    for (let tuanId of $.tuanIdS.tuanIds) {
+      if (!tuanId) continue
+      await JoinTuan(tuanId);
+    }
+  }
+}
 //可获取开团后的团ID，如果团ID为空并且surplusOpenTuanNum>0，则可继续开团
 //如果团ID不为空，则查询QueryTuan()
 function QueryActiveConfig() {
   return new Promise((resolve) => {
-    const options = {
-      'url': `https://m.jingxi.com/dreamfactory/tuan/QueryActiveConfig?activeId=${escape(tuanActiveId)}&_time=${Date.now()}&_=${Date.now()}&sceneval=2&g_login_type=1&_ste=1&h5st=${decrypt(Date.now())}`,
-      "headers": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Accept-Language": "zh-cn",
-        "Connection": "keep-alive",
-        "Cookie": cookie,
-        "Host": "m.jingxi.com",
-        "Referer": "https://st.jingxi.com/pingou/dream_factory/divide.html",
-        "User-Agent": "jdpingou;iPhone;3.15.2;13.5.1;90bab9217f465a83a99c0b554a946b0b0d5c2f7a;network/wifi;model/iPhone12,1;appBuild/100365;ADID/696F8BD2-0820-405C-AFC0-3C6D028040E5;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/1;hasOCPay/0;supportBestPay/0;session/14;pap/JA2015_311210;brand/apple;supportJDSHWK/1;"
-      }
-    }
-    $.get(options, (err, resp, data) => {
+    const body = `activeId=${escape(tuanActiveId)}`;
+    const options = taskTuanUrl(`QueryActiveConfig`, body, `_time,activeId,tuanId`)
+    $.get(options, async (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -956,20 +984,9 @@ function QueryActiveConfig() {
 }
 function QueryTuan(activeId, tuanId) {
   return new Promise((resolve) => {
-    const options = {
-      'url': `https://m.jingxi.com/dreamfactory/tuan/QueryTuan?activeId=${escape(activeId)}&tuanId=${escape(tuanId)}&_time=${Date.now()}&_=${Date.now()}&sceneval=2&g_login_type=1&_ste=1&h5st=${decrypt(Date.now(), '_time,activeId,tuanId')}&_stk=_time,activeId,tuanId`,
-      "headers": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Accept-Language": "zh-cn",
-        "Connection": "keep-alive",
-        "Cookie": cookie,
-        "Host": "m.jingxi.com",
-        "Referer": "https://st.jingxi.com/pingou/dream_factory/divide.html",
-        "User-Agent": "jdpingou;iPhone;3.15.2;13.5.1;90bab9217f465a83a99c0b554a946b0b0d5c2f7a;network/wifi;model/iPhone12,1;appBuild/100365;ADID/696F8BD2-0820-405C-AFC0-3C6D028040E5;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/1;hasOCPay/0;supportBestPay/0;session/14;pap/JA2015_311210;brand/apple;supportJDSHWK/1;"
-      }
-    }
-    $.get(options, (err, resp, data) => {
+    const body = `activeId=${escape(activeId)}&tuanId=${escape(tuanId)}`;
+    const options = taskTuanUrl(`QueryTuan`, body, `_time,activeId,tuanId`)
+    $.get(options, async (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -995,20 +1012,9 @@ function QueryTuan(activeId, tuanId) {
 //开团API
 function CreateTuan() {
   return new Promise((resolve) => {
-    const options = {
-      'url': `https://m.jingxi.com/dreamfactory/tuan/CreateTuan?activeId=${escape(tuanActiveId)}&isOpenApp=1&_time=${Date.now()}&_=${Date.now()}&sceneval=2&g_login_type=1&_stk=_time,activeId,isOpenApp&_ste=1&h5st=${decrypt(Date.now(), '_time,activeId,isOpenApp')}`,
-      "headers": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Accept-Language": "zh-cn",
-        "Connection": "keep-alive",
-        "Cookie": cookie,
-        "Host": "m.jingxi.com",
-        "Referer": "https://st.jingxi.com/pingou/dream_factory/divide.html",
-        "User-Agent": "jdpingou;iPhone;3.15.2;13.5.1;90bab9217f465a83a99c0b554a946b0b0d5c2f7a;network/wifi;model/iPhone12,1;appBuild/100365;ADID/696F8BD2-0820-405C-AFC0-3C6D028040E5;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/1;hasOCPay/0;supportBestPay/0;session/14;pap/JA2015_311210;brand/apple;supportJDSHWK/1;"
-      }
-    }
-    $.get(options, (err, resp, data) => {
+    const body =`activeId=${escape(tuanActiveId)}&isOpenApp=1`
+    const options = taskTuanUrl(`CreateTuan`, body, '_time,activeId,isOpenApp')
+    $.get(options, async (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -1020,7 +1026,7 @@ function CreateTuan() {
               console.log(`开团成功tuanId为\n${data.data['tuanId']}`);
               $.tuanIds.push(data.data['tuanId']);
             } else {
-              console.log(`异常：${JSON.stringify(data)}`);
+              console.log(`开团异常：${JSON.stringify(data)}`);
             }
           }
         }
@@ -1032,40 +1038,12 @@ function CreateTuan() {
     })
   })
 }
-async function joinLeaderTuan() {
-  $.tuanIdS = null;
-  if (!$.tuanIdS) await updateTuanIdsCDN('https://github.com/ZFeng3242/updateTeam/raw/master/shareCodes/jd_updateFactoryTuanId.json');
-  if ($.tuanIdS && $.tuanIdS.tuanIds) {
-    for (let tuanId of $.tuanIdS.tuanIds) {
-      if (!tuanId) continue
-      await JoinTuan(tuanId);
-    }
-  }
-  $.tuanIdS = null;
-  if (!$.tuanIdS) await updateTuanIdsCDN('https://github.com/ZFeng3242/updateTeam/raw/master/shareCodes/jd_updateFactoryTuanId.json');
-  if ($.tuanIdS && $.tuanIdS.tuanIds) {
-    for (let tuanId of $.tuanIdS.tuanIds) {
-      if (!tuanId) continue
-      await JoinTuan(tuanId);
-    }
-  }
-}
-function JoinTuan(tuanId) {
+
+function JoinTuan(tuanId, stk = '_time,activeId,tuanId') {
   return new Promise((resolve) => {
-    const options = {
-      'url': `https://m.jingxi.com/dreamfactory/tuan/JoinTuan?activeId=${escape(tuanActiveId)}&tuanId=${escape(tuanId)}&_time=${Date.now()}&_stk=_time,activeId,tuanId&h5st=20210303071536851;0386098809875160;10001;tk01w64d91a47a8na1RialFZV1MxNgHFXD25O99/df6c113+v+vdL7mhZgJvA5EVGKI5pNOFsJxjz1F3E23ZgM/3q0kx;686703a0bcc9d7cb0a1f68c6c83c994e4ae6ac545052ddcfbdf8e074d6408122&_=${Date.now()}&sceneval=2&g_login_type=1`,
-      "headers": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Accept-Language": "zh-cn",
-        "Connection": "keep-alive",
-        "Cookie": cookie,
-        "Host": "m.jingxi.com",
-        "Referer": "https://st.jingxi.com/pingou/dream_factory/divide.html",
-        "User-Agent": "jdpingou"
-      }
-    }
-    $.get(options, (err, resp, data) => {
+    const body = `activeId=${escape(tuanActiveId)}&tuanId=${escape(tuanId)}`;
+    const options = taskTuanUrl(`JoinTuan`, body, '_time,activeId,tuanId')
+    $.get(options, async (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -1091,19 +1069,8 @@ function JoinTuan(tuanId) {
 //查询所有的团情况(自己开团以及参加别人的团)
 function QueryAllTuan() {
   return new Promise((resolve) => {
-    const options = {
-      'url': `https://m.jingxi.com/dreamfactory/tuan/QueryAllTuan?activeId=${escape(tuanActiveId)}&pageNo=1&pageSize=10&_time=${Date.now()}&_=${Date.now()}&sceneval=2&g_login_type=1&_ste=1&h5st=${decrypt(Date.now())}`,
-      "headers": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Accept-Language": "zh-cn",
-        "Connection": "keep-alive",
-        "Cookie": cookie,
-        "Host": "m.jingxi.com",
-        "Referer": "https://st.jingxi.com/pingou/dream_factory/divide.html",
-        "User-Agent": "jdpingou;iPhone;3.15.2;13.5.1;90bab9217f465a83a99c0b554a946b0b0d5c2f7a;network/wifi;model/iPhone12,1;appBuild/100365;ADID/696F8BD2-0820-405C-AFC0-3C6D028040E5;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/1;hasOCPay/0;supportBestPay/0;session/14;pap/JA2015_311210;brand/apple;supportJDSHWK/1;"
-      }
-    }
+    const body = `activeId=${escape(tuanActiveId)}&pageNo=1&pageSize=10`;
+    const options = taskTuanUrl(`QueryAllTuan`, body, '_time,activeId,pageNo,pageSize')
     $.get(options, async (err, resp, data) => {
       try {
         if (err) {
@@ -1148,19 +1115,8 @@ function QueryAllTuan() {
 //开团人的领取奖励API
 function tuanAward(activeId, tuanId, isTuanLeader = true) {
   return new Promise((resolve) => {
-    const options = {
-      'url': `https://m.jingxi.com/dreamfactory/tuan/Award?activeId=${escape(activeId)}&tuanId=${escape(tuanId)}&_time=${Date.now()}&_=${Date.now()}&sceneval=2&g_login_type=1&_ste=1&h5st=${decrypt(Date.now())}`,
-      "headers": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Accept-Language": "zh-cn",
-        "Connection": "keep-alive",
-        "Cookie": cookie,
-        "Host": "m.jingxi.com",
-        "Referer": "https://st.jingxi.com/pingou/dream_factory/divide.html",
-        "User-Agent": "jdpingou;iPhone;3.15.2;13.5.1;90bab9217f465a83a99c0b554a946b0b0d5c2f7a;network/wifi;model/iPhone12,1;appBuild/100365;ADID/696F8BD2-0820-405C-AFC0-3C6D028040E5;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/1;hasOCPay/0;supportBestPay/0;session/14;pap/JA2015_311210;brand/apple;supportJDSHWK/1;"
-      }
-    }
+    const body = `activeId=${escape(activeId)}&tuanId=${escape(tuanId)}`;
+    const options = taskTuanUrl(`Award`, body, '_time,activeId,tuanId')
     $.get(options, async (err, resp, data) => {
       try {
         if (err) {
@@ -1201,23 +1157,7 @@ function tuanAward(activeId, tuanId, isTuanLeader = true) {
     })
   })
 }
-function updateTuanIds(url = '') {
-  return new Promise(resolve => {
-    $.get({url}, (err, resp, data) => {
-      try {
-        if (err) {
-          console.log(`${JSON.stringify(err)}`)
-        } else {
-          $.tuanIdS = JSON.parse(data);
-        }
-      } catch (e) {
-        $.logErr(e, resp)
-      } finally {
-        resolve();
-      }
-    })
-  })
-}
+
 function updateTuanIdsCDN(url) {
   return new Promise(async resolve => {
     $.get({url,
@@ -1242,9 +1182,7 @@ function updateTuanIdsCDN(url) {
     resolve();
   })
 }
-function checkExchange() {
 
-}
 //商品可兑换时的通知
 async function exchangeProNotify() {
   await GetShelvesList();
@@ -1312,9 +1250,7 @@ async function showMsg() {
 function readShareCode() {
   console.log(`开始`)
   return new Promise(async resolve => {
-    $.get({url: "https://github.com/ZFeng3242/RandomShareCode/raw/main/JD_Factory.json",headers:{
-        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
-      }}, async (err, resp, data) => {
+    $.get({url: `https://github.com/ZFeng3242/RandomShareCode/raw/main/JD_Factory.json`, 'timeout': 10000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -1410,7 +1346,7 @@ function TotalBean() {
               return
             }
             if (data['retcode'] === 0) {
-              $.nickName = data['base'].nickname;
+              $.nickName = (data['base'] && data['base'].nickname) || $.UserName;
             } else {
               $.nickName = $.UserName
             }
@@ -1437,9 +1373,30 @@ function safeGet(data) {
     return false;
   }
 }
+function taskTuanUrl(functionId, body = '', stk) {
+  let url = `https://m.jingxi.com/dreamfactory/tuan/${functionId}?${body}&_time=${Date.now()}&_=${Date.now()}&sceneval=2&g_login_type=1&_ste=1`
+  url += `&h5st=${decrypt(Date.now(), stk || '', '', url)}`
+  if (stk) {
+    url += `&_stk=${encodeURIComponent(stk)}`;
+  }
+  return {
+    url,
+    headers: {
+      "Accept": "*/*",
+      "Accept-Encoding": "gzip, deflate, br",
+      "Accept-Language": "zh-cn",
+      "Connection": "keep-alive",
+      "Cookie": cookie,
+      "Host": "m.jingxi.com",
+      "Referer": "https://st.jingxi.com/pingou/dream_factory/divide.html",
+      "User-Agent": "jdpingou;iPhone;3.15.2;13.5.1;90bab9217f465a83a99c0b554a946b0b0d5c2f7a;network/wifi;model/iPhone12,1;appBuild/100365;ADID/696F8BD2-0820-405C-AFC0-3C6D028040E5;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/1;hasOCPay/0;supportBestPay/0;session/14;pap/JA2015_311210;brand/apple;supportJDSHWK/1;"
+    }
+  }
+}
 
 function taskurl(functionId, body = '', stk) {
-  let url = `${JD_API_HOST}/dreamfactory/${functionId}?zone=dream_factory&${body}&sceneval=2&g_login_type=1&_time=${Date.now()}&_=${Date.now()}&_ste=1&h5st=${encodeURIComponent(decrypt(Date.now(), stk))}`
+  let url = `${JD_API_HOST}/dreamfactory/${functionId}?zone=dream_factory&${body}&sceneval=2&g_login_type=1&_time=${Date.now()}&_=${Date.now()}&_ste=1`
+  url += `&h5st=${encodeURIComponent(decrypt(Date.now(), stk, '', url))}`
   if (stk) {
     url += `&_stk=${encodeURIComponent(stk)}`;
   }
@@ -1458,13 +1415,15 @@ function taskurl(functionId, body = '', stk) {
   }
 }
 function newtasksysUrl(functionId, taskId, stk) {
-  let url = `${JD_API_HOST}/newtasksys/newtasksys_front/${functionId}?source=dreamfactory&bizCode=dream_factory&sceneval=2&g_login_type=1&_time=${Date.now()}&_=${Date.now()}&_ste=1&h5st=${decrypt(Date.now(), stk)}`;
+  let url = `${JD_API_HOST}/newtasksys/newtasksys_front/${functionId}?source=dreamfactory&bizCode=dream_factory&sceneval=2&g_login_type=1&_time=${Date.now()}&_=${Date.now()}&_ste=1`;
   if (taskId) {
     url += `&taskId=${taskId}`;
   }
   if (stk) {
     url += `&_stk=${stk}`;
   }
+  //传入url进行签名
+  url += `&h5st=${decrypt(Date.now(), stk, '', url)}`
   return {
     url,
     "headers": {
@@ -1479,22 +1438,31 @@ function newtasksysUrl(functionId, taskId, stk) {
     }
   }
 }
-Date.prototype.Format = function (fmt) { //author: meizz
-  var o = {
-    "M+": this.getMonth() + 1,                 //月份
-    "d+": this.getDate(),                    //日
-    "h+": this.getHours(),                   //小时
-    "m+": this.getMinutes(),                 //分
-    "s+": this.getSeconds(),                 //秒
-    "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-    "S": this.getMilliseconds()             //毫秒
-  };
-  if (/(y+)/.test(fmt))
-    fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-  for (var k in o)
-    if (new RegExp("(" + k + ")").test(fmt))
-      fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-  return fmt;
+/*
+修改时间戳转换函数，京喜工厂原版修改
+ */
+Date.prototype.Format = function (fmt) {
+  var e,
+      n = this, d = fmt, l = {
+        "M+": n.getMonth() + 1,
+        "d+": n.getDate(),
+        "D+": n.getDate(),
+        "h+": n.getHours(),
+        "H+": n.getHours(),
+        "m+": n.getMinutes(),
+        "s+": n.getSeconds(),
+        "w+": n.getDay(),
+        "q+": Math.floor((n.getMonth() + 3) / 3),
+        "S+": n.getMilliseconds()
+      };
+  /(y+)/i.test(d) && (d = d.replace(RegExp.$1, "".concat(n.getFullYear()).substr(4 - RegExp.$1.length)));
+  for (var k in l) {
+    if (new RegExp("(".concat(k, ")")).test(d)) {
+      var t, a = "S+" === k ? "000" : "00";
+      d = d.replace(RegExp.$1, 1 == RegExp.$1.length ? l[k] : ("".concat(a) + l[k]).substr("".concat(l[k]).length))
+    }
+  }
+  return d;
 }
 function jsonParse(str) {
   if (typeof str == "string") {
@@ -1507,27 +1475,46 @@ function jsonParse(str) {
     }
   }
 }
-function decrypt(time, stk, type) {
+function decrypt(time, stk, type, url) {
+  stk = stk || (url ? getUrlQueryParams(url, '_stk') : '')
   if (stk) {
-    const random = 'pmUmA8IyRcDp';
-    const token = `tk01w952a1b73a8nU0luMGtBanZTHCgj0KFVwDa4n5pJ95T/5bxO/m54p4MtgVEwKNev1u/BUjrpWAUMZPW0Kz2RWP8v`;
-    const fingerprint = 8277529360925161;
-    const timestamp = new Date(time).Format("yyyyMMddhhmmssS");
+    // const random = '9c66+/6i1jjP';
+    // const token = `tk01wc7621cbea8nQmVZSmlhZi94FdUu+YM8dL1NZhoyQSy2c0po7rgY+nXdXBWRaUzOoLBqlpqOccJ56KHSjVil7Q7w`;
+    // const fingerprint = 2964628087631161;
+    // const appId = 10001;
+    const random = 'cNlpbJCwIFx/';
+    let token = `tk01wc7951ceea8nVzY0UlBvK3QvPAfwG6UuVMo3YIwnuyPtwgIZr9BSCkJT96NMHRqNWCO5x0zbNsEA2bkjst3tYymV`;
+    let fingerprint = 6318883301648161;
     const appId = 10001;
+    const timestamp = new Date(time).Format("yyyyMMddhhmmssSSS");
     const str = `${token}${fingerprint}${timestamp}${appId}${random}`;
     const hash1 = $.CryptoJS.HmacSHA512(str, token).toString($.CryptoJS.enc.Hex);
     let st = '';
     stk.split(',').map((item, index) => {
-      st += `${item}:${item === '_time' ? time : item === 'zone' ? 'dream_factory' : item === 'type' ? type || '1' : ''}${index === stk.split(',').length -1 ? '' : '&'}`;
+      // st += `${item}:${item === '_time' ? time : item === 'zone' ? 'dream_factory' : item === 'type' ? type || '1' : ''}${index === stk.split(',').length -1 ? '' : '&'}`;
+      st += `${item}:${getUrlQueryParams(url, item)}${index === stk.split(',').length -1 ? '' : '&'}`;
     })
-    const hash2 = $.CryptoJS.HmacSHA256(st, hash1).toString($.CryptoJS.enc.Hex);
-    console.log(`st:${st}\n`)
-    // console.log(`hash2:${hash2}\n`)
-    // console.log(`h5st:${h5st}\n`)
+    // const hash2 = $.CryptoJS.HmacSHA256(st, hash1).toString($.CryptoJS.enc.Hex);
+    // const hash2 = $.CryptoJS.HmacSHA256(st, hash1.toString($.CryptoJS.enc.Hex)).toString($.CryptoJS.enc.Hex);
+    const hash2 = $.CryptoJS.HmacSHA256(st, hash1.toString()).toString($.CryptoJS.enc.Hex);
+    // console.log(`st:${st}\n`)
+    // console.log(`hash2:${JSON.stringify(["".concat(timestamp.toString()), "".concat(fingerprint.toString()), "".concat(appId.toString()), "".concat(token), "".concat(hash2)])}\n`)
+    // console.log(`h5st:${["".concat(timestamp.toString()), "".concat(fingerprint.toString()), "".concat(appId.toString()), "".concat(token), "".concat(hash2)].join(";")}\n`)
     return ["".concat(timestamp.toString()), "".concat(fingerprint.toString()), "".concat(appId.toString()), "".concat(token), "".concat(hash2)].join(";")
   } else {
     return '20210318144213808;8277529360925161;10001;tk01w952a1b73a8nU0luMGtBanZTHCgj0KFVwDa4n5pJ95T/5bxO/m54p4MtgVEwKNev1u/BUjrpWAUMZPW0Kz2RWP8v;86054c036fe3bf0991bd9a9da1a8d44dd130c6508602215e50bb1e385326779d'
-    }
+  }
+}
+/**
+ * 新增url参数获取函数
+ * @param url_string
+ * @param param
+ * @returns {string|string}
+ */
+function getUrlQueryParams(url_string, param) {
+  let  url = new URL(url_string);
+  let data = url.searchParams.get(param);
+  return data ? data : '';
 }
 // prettier-ignore
-function Env(t,e){"undefined"!=typeof process&&JSON.stringify(process.env).indexOf("GITEE")>-1&&process.exit(0);class s{constructor(t){this.env=t}send(t,e="GET"){t="string"==typeof t?{url:t}:t;let s=this.get;return"POST"===e&&(s=this.post),new Promise((e,i)=>{s.call(this,t,(t,s,r)=>{t?i(t):e(s)})})}get(t){return this.send.call(this.env,t)}post(t){return this.send.call(this.env,t,"POST")}}return new class{constructor(t,e){this.name=t,this.http=new s(this),this.data=null,this.dataFile="box.dat",this.logs=[],this.isMute=!1,this.isNeedRewrite=!1,this.logSeparator="\n",this.startTime=(new Date).getTime(),Object.assign(this,e),this.log("",`🔔${this.name}, 开始!`)}isNode(){return"undefined"!=typeof module&&!!module.exports}isQuanX(){return"undefined"!=typeof $task}isSurge(){return"undefined"!=typeof $httpClient&&"undefined"==typeof $loon}isLoon(){return"undefined"!=typeof $loon}toObj(t,e=null){try{return JSON.parse(t)}catch{return e}}toStr(t,e=null){try{return JSON.stringify(t)}catch{return e}}getjson(t,e){let s=e;const i=this.getdata(t);if(i)try{s=JSON.parse(this.getdata(t))}catch{}return s}setjson(t,e){try{return this.setdata(JSON.stringify(t),e)}catch{return!1}}getScript(t){return new Promise(e=>{this.get({url:t},(t,s,i)=>e(i))})}runScript(t,e){return new Promise(s=>{let i=this.getdata("@chavy_boxjs_userCfgs.httpapi");i=i?i.replace(/\n/g,"").trim():i;let r=this.getdata("@chavy_boxjs_userCfgs.httpapi_timeout");r=r?1*r:20,r=e&&e.timeout?e.timeout:r;const[o,h]=i.split("@"),n={url:`http://${h}/v1/scripting/evaluate`,body:{script_text:t,mock_type:"cron",timeout:r},headers:{"X-Key":o,Accept:"*/*"}};this.post(n,(t,e,i)=>s(i))}).catch(t=>this.logErr(t))}loaddata(){if(!this.isNode())return{};{this.fs=this.fs?this.fs:require("fs"),this.path=this.path?this.path:require("path");const t=this.path.resolve(this.dataFile),e=this.path.resolve(process.cwd(),this.dataFile),s=this.fs.existsSync(t),i=!s&&this.fs.existsSync(e);if(!s&&!i)return{};{const i=s?t:e;try{return JSON.parse(this.fs.readFileSync(i))}catch(t){return{}}}}}writedata(){if(this.isNode()){this.fs=this.fs?this.fs:require("fs"),this.path=this.path?this.path:require("path");const t=this.path.resolve(this.dataFile),e=this.path.resolve(process.cwd(),this.dataFile),s=this.fs.existsSync(t),i=!s&&this.fs.existsSync(e),r=JSON.stringify(this.data);s?this.fs.writeFileSync(t,r):i?this.fs.writeFileSync(e,r):this.fs.writeFileSync(t,r)}}lodash_get(t,e,s){const i=e.replace(/\[(\d+)\]/g,".$1").split(".");let r=t;for(const t of i)if(r=Object(r)[t],void 0===r)return s;return r}lodash_set(t,e,s){return Object(t)!==t?t:(Array.isArray(e)||(e=e.toString().match(/[^.[\]]+/g)||[]),e.slice(0,-1).reduce((t,s,i)=>Object(t[s])===t[s]?t[s]:t[s]=Math.abs(e[i+1])>>0==+e[i+1]?[]:{},t)[e[e.length-1]]=s,t)}getdata(t){let e=this.getval(t);if(/^@/.test(t)){const[,s,i]=/^@(.*?)\.(.*?)$/.exec(t),r=s?this.getval(s):"";if(r)try{const t=JSON.parse(r);e=t?this.lodash_get(t,i,""):e}catch(t){e=""}}return e}setdata(t,e){let s=!1;if(/^@/.test(e)){const[,i,r]=/^@(.*?)\.(.*?)$/.exec(e),o=this.getval(i),h=i?"null"===o?null:o||"{}":"{}";try{const e=JSON.parse(h);this.lodash_set(e,r,t),s=this.setval(JSON.stringify(e),i)}catch(e){const o={};this.lodash_set(o,r,t),s=this.setval(JSON.stringify(o),i)}}else s=this.setval(t,e);return s}getval(t){return this.isSurge()||this.isLoon()?$persistentStore.read(t):this.isQuanX()?$prefs.valueForKey(t):this.isNode()?(this.data=this.loaddata(),this.data[t]):this.data&&this.data[t]||null}setval(t,e){return this.isSurge()||this.isLoon()?$persistentStore.write(t,e):this.isQuanX()?$prefs.setValueForKey(t,e):this.isNode()?(this.data=this.loaddata(),this.data[e]=t,this.writedata(),!0):this.data&&this.data[e]||null}initGotEnv(t){this.got=this.got?this.got:require("got"),this.cktough=this.cktough?this.cktough:require("tough-cookie"),this.ckjar=this.ckjar?this.ckjar:new this.cktough.CookieJar,t&&(t.headers=t.headers?t.headers:{},void 0===t.headers.Cookie&&void 0===t.cookieJar&&(t.cookieJar=this.ckjar))}get(t,e=(()=>{})){t.headers&&(delete t.headers["Content-Type"],delete t.headers["Content-Length"]),this.isSurge()||this.isLoon()?(this.isSurge()&&this.isNeedRewrite&&(t.headers=t.headers||{},Object.assign(t.headers,{"X-Surge-Skip-Scripting":!1})),$httpClient.get(t,(t,s,i)=>{!t&&s&&(s.body=i,s.statusCode=s.status),e(t,s,i)})):this.isQuanX()?(this.isNeedRewrite&&(t.opts=t.opts||{},Object.assign(t.opts,{hints:!1})),$task.fetch(t).then(t=>{const{statusCode:s,statusCode:i,headers:r,body:o}=t;e(null,{status:s,statusCode:i,headers:r,body:o},o)},t=>e(t))):this.isNode()&&(this.initGotEnv(t),this.got(t).on("redirect",(t,e)=>{try{if(t.headers["set-cookie"]){const s=t.headers["set-cookie"].map(this.cktough.Cookie.parse).toString();s&&this.ckjar.setCookieSync(s,null),e.cookieJar=this.ckjar}}catch(t){this.logErr(t)}}).then(t=>{const{statusCode:s,statusCode:i,headers:r,body:o}=t;e(null,{status:s,statusCode:i,headers:r,body:o},o)},t=>{const{message:s,response:i}=t;e(s,i,i&&i.body)}))}post(t,e=(()=>{})){if(t.body&&t.headers&&!t.headers["Content-Type"]&&(t.headers["Content-Type"]="application/x-www-form-urlencoded"),t.headers&&delete t.headers["Content-Length"],this.isSurge()||this.isLoon())this.isSurge()&&this.isNeedRewrite&&(t.headers=t.headers||{},Object.assign(t.headers,{"X-Surge-Skip-Scripting":!1})),$httpClient.post(t,(t,s,i)=>{!t&&s&&(s.body=i,s.statusCode=s.status),e(t,s,i)});else if(this.isQuanX())t.method="POST",this.isNeedRewrite&&(t.opts=t.opts||{},Object.assign(t.opts,{hints:!1})),$task.fetch(t).then(t=>{const{statusCode:s,statusCode:i,headers:r,body:o}=t;e(null,{status:s,statusCode:i,headers:r,body:o},o)},t=>e(t));else if(this.isNode()){this.initGotEnv(t);const{url:s,...i}=t;this.got.post(s,i).then(t=>{const{statusCode:s,statusCode:i,headers:r,body:o}=t;e(null,{status:s,statusCode:i,headers:r,body:o},o)},t=>{const{message:s,response:i}=t;e(s,i,i&&i.body)})}}time(t,e=null){const s=e?new Date(e):new Date;let i={"M+":s.getMonth()+1,"d+":s.getDate(),"H+":s.getHours(),"m+":s.getMinutes(),"s+":s.getSeconds(),"q+":Math.floor((s.getMonth()+3)/3),S:s.getMilliseconds()};/(y+)/.test(t)&&(t=t.replace(RegExp.$1,(s.getFullYear()+"").substr(4-RegExp.$1.length)));for(let e in i)new RegExp("("+e+")").test(t)&&(t=t.replace(RegExp.$1,1==RegExp.$1.length?i[e]:("00"+i[e]).substr((""+i[e]).length)));return t}msg(e=t,s="",i="",r){const o=t=>{if(!t)return t;if("string"==typeof t)return this.isLoon()?t:this.isQuanX()?{"open-url":t}:this.isSurge()?{url:t}:void 0;if("object"==typeof t){if(this.isLoon()){let e=t.openUrl||t.url||t["open-url"],s=t.mediaUrl||t["media-url"];return{openUrl:e,mediaUrl:s}}if(this.isQuanX()){let e=t["open-url"]||t.url||t.openUrl,s=t["media-url"]||t.mediaUrl;return{"open-url":e,"media-url":s}}if(this.isSurge()){let e=t.url||t.openUrl||t["open-url"];return{url:e}}}};if(this.isMute||(this.isSurge()||this.isLoon()?$notification.post(e,s,i,o(r)):this.isQuanX()&&$notify(e,s,i,o(r))),!this.isMuteLog){let t=["","==============📣系统通知📣=============="];t.push(e),s&&t.push(s),i&&t.push(i),console.log(t.join("\n")),this.logs=this.logs.concat(t)}}log(...t){t.length>0&&(this.logs=[...this.logs,...t]),console.log(t.join(this.logSeparator))}logErr(t,e){const s=!this.isSurge()&&!this.isQuanX()&&!this.isLoon();s?this.log("",`❗️${this.name}, 错误!`,t.stack):this.log("",`❗️${this.name}, 错误!`,t)}wait(t){return new Promise(e=>setTimeout(e,t))}done(t={}){const e=(new Date).getTime(),s=(e-this.startTime)/1e3;this.log("",`🔔${this.name}, 结束! 🕛 ${s} 秒`),this.log(),(this.isSurge()||this.isQuanX()||this.isLoon())&&$done(t)}}(t,e)}
+function Env(t,e){class s{constructor(t){this.env=t}send(t,e="GET"){t="string"==typeof t?{url:t}:t;let s=this.get;return"POST"===e&&(s=this.post),new Promise((e,i)=>{s.call(this,t,(t,s,r)=>{t?i(t):e(s)})})}get(t){return this.send.call(this.env,t)}post(t){return this.send.call(this.env,t,"POST")}}return new class{constructor(t,e){this.name=t,this.http=new s(this),this.data=null,this.dataFile="box.dat",this.logs=[],this.isMute=!1,this.isNeedRewrite=!1,this.logSeparator="\n",this.startTime=(new Date).getTime(),Object.assign(this,e),this.log("",`🔔${this.name}, 开始!`)}isNode(){return"undefined"!=typeof module&&!!module.exports}isQuanX(){return"undefined"!=typeof $task}isSurge(){return"undefined"!=typeof $httpClient&&"undefined"==typeof $loon}isLoon(){return"undefined"!=typeof $loon}toObj(t,e=null){try{return JSON.parse(t)}catch{return e}}toStr(t,e=null){try{return JSON.stringify(t)}catch{return e}}getjson(t,e){let s=e;const i=this.getdata(t);if(i)try{s=JSON.parse(this.getdata(t))}catch{}return s}setjson(t,e){try{return this.setdata(JSON.stringify(t),e)}catch{return!1}}getScript(t){return new Promise(e=>{this.get({url:t},(t,s,i)=>e(i))})}runScript(t,e){return new Promise(s=>{let i=this.getdata("@chavy_boxjs_userCfgs.httpapi");i=i?i.replace(/\n/g,"").trim():i;let r=this.getdata("@chavy_boxjs_userCfgs.httpapi_timeout");r=r?1*r:20,r=e&&e.timeout?e.timeout:r;const[o,h]=i.split("@"),n={url:`http://${h}/v1/scripting/evaluate`,body:{script_text:t,mock_type:"cron",timeout:r},headers:{"X-Key":o,Accept:"*/*"}};this.post(n,(t,e,i)=>s(i))}).catch(t=>this.logErr(t))}loaddata(){if(!this.isNode())return{};{this.fs=this.fs?this.fs:require("fs"),this.path=this.path?this.path:require("path");const t=this.path.resolve(this.dataFile),e=this.path.resolve(process.cwd(),this.dataFile),s=this.fs.existsSync(t),i=!s&&this.fs.existsSync(e);if(!s&&!i)return{};{const i=s?t:e;try{return JSON.parse(this.fs.readFileSync(i))}catch(t){return{}}}}}writedata(){if(this.isNode()){this.fs=this.fs?this.fs:require("fs"),this.path=this.path?this.path:require("path");const t=this.path.resolve(this.dataFile),e=this.path.resolve(process.cwd(),this.dataFile),s=this.fs.existsSync(t),i=!s&&this.fs.existsSync(e),r=JSON.stringify(this.data);s?this.fs.writeFileSync(t,r):i?this.fs.writeFileSync(e,r):this.fs.writeFileSync(t,r)}}lodash_get(t,e,s){const i=e.replace(/\[(\d+)\]/g,".$1").split(".");let r=t;for(const t of i)if(r=Object(r)[t],void 0===r)return s;return r}lodash_set(t,e,s){return Object(t)!==t?t:(Array.isArray(e)||(e=e.toString().match(/[^.[\]]+/g)||[]),e.slice(0,-1).reduce((t,s,i)=>Object(t[s])===t[s]?t[s]:t[s]=Math.abs(e[i+1])>>0==+e[i+1]?[]:{},t)[e[e.length-1]]=s,t)}getdata(t){let e=this.getval(t);if(/^@/.test(t)){const[,s,i]=/^@(.*?)\.(.*?)$/.exec(t),r=s?this.getval(s):"";if(r)try{const t=JSON.parse(r);e=t?this.lodash_get(t,i,""):e}catch(t){e=""}}return e}setdata(t,e){let s=!1;if(/^@/.test(e)){const[,i,r]=/^@(.*?)\.(.*?)$/.exec(e),o=this.getval(i),h=i?"null"===o?null:o||"{}":"{}";try{const e=JSON.parse(h);this.lodash_set(e,r,t),s=this.setval(JSON.stringify(e),i)}catch(e){const o={};this.lodash_set(o,r,t),s=this.setval(JSON.stringify(o),i)}}else s=this.setval(t,e);return s}getval(t){return this.isSurge()||this.isLoon()?$persistentStore.read(t):this.isQuanX()?$prefs.valueForKey(t):this.isNode()?(this.data=this.loaddata(),this.data[t]):this.data&&this.data[t]||null}setval(t,e){return this.isSurge()||this.isLoon()?$persistentStore.write(t,e):this.isQuanX()?$prefs.setValueForKey(t,e):this.isNode()?(this.data=this.loaddata(),this.data[e]=t,this.writedata(),!0):this.data&&this.data[e]||null}initGotEnv(t){this.got=this.got?this.got:require("got"),this.cktough=this.cktough?this.cktough:require("tough-cookie"),this.ckjar=this.ckjar?this.ckjar:new this.cktough.CookieJar,t&&(t.headers=t.headers?t.headers:{},void 0===t.headers.Cookie&&void 0===t.cookieJar&&(t.cookieJar=this.ckjar))}get(t,e=(()=>{})){t.headers&&(delete t.headers["Content-Type"],delete t.headers["Content-Length"]),this.isSurge()||this.isLoon()?(this.isSurge()&&this.isNeedRewrite&&(t.headers=t.headers||{},Object.assign(t.headers,{"X-Surge-Skip-Scripting":!1})),$httpClient.get(t,(t,s,i)=>{!t&&s&&(s.body=i,s.statusCode=s.status),e(t,s,i)})):this.isQuanX()?(this.isNeedRewrite&&(t.opts=t.opts||{},Object.assign(t.opts,{hints:!1})),$task.fetch(t).then(t=>{const{statusCode:s,statusCode:i,headers:r,body:o}=t;e(null,{status:s,statusCode:i,headers:r,body:o},o)},t=>e(t))):this.isNode()&&(this.initGotEnv(t),this.got(t).on("redirect",(t,e)=>{try{if(t.headers["set-cookie"]){const s=t.headers["set-cookie"].map(this.cktough.Cookie.parse).toString();s&&this.ckjar.setCookieSync(s,null),e.cookieJar=this.ckjar}}catch(t){this.logErr(t)}}).then(t=>{const{statusCode:s,statusCode:i,headers:r,body:o}=t;e(null,{status:s,statusCode:i,headers:r,body:o},o)},t=>{const{message:s,response:i}=t;e(s,i,i&&i.body)}))}post(t,e=(()=>{})){if(t.body&&t.headers&&!t.headers["Content-Type"]&&(t.headers["Content-Type"]="application/x-www-form-urlencoded"),t.headers&&delete t.headers["Content-Length"],this.isSurge()||this.isLoon())this.isSurge()&&this.isNeedRewrite&&(t.headers=t.headers||{},Object.assign(t.headers,{"X-Surge-Skip-Scripting":!1})),$httpClient.post(t,(t,s,i)=>{!t&&s&&(s.body=i,s.statusCode=s.status),e(t,s,i)});else if(this.isQuanX())t.method="POST",this.isNeedRewrite&&(t.opts=t.opts||{},Object.assign(t.opts,{hints:!1})),$task.fetch(t).then(t=>{const{statusCode:s,statusCode:i,headers:r,body:o}=t;e(null,{status:s,statusCode:i,headers:r,body:o},o)},t=>e(t));else if(this.isNode()){this.initGotEnv(t);const{url:s,...i}=t;this.got.post(s,i).then(t=>{const{statusCode:s,statusCode:i,headers:r,body:o}=t;e(null,{status:s,statusCode:i,headers:r,body:o},o)},t=>{const{message:s,response:i}=t;e(s,i,i&&i.body)})}}time(t,e=null){const s=e?new Date(e):new Date;let i={"M+":s.getMonth()+1,"d+":s.getDate(),"H+":s.getHours(),"m+":s.getMinutes(),"s+":s.getSeconds(),"q+":Math.floor((s.getMonth()+3)/3),S:s.getMilliseconds()};/(y+)/.test(t)&&(t=t.replace(RegExp.$1,(s.getFullYear()+"").substr(4-RegExp.$1.length)));for(let e in i)new RegExp("("+e+")").test(t)&&(t=t.replace(RegExp.$1,1==RegExp.$1.length?i[e]:("00"+i[e]).substr((""+i[e]).length)));return t}msg(e=t,s="",i="",r){const o=t=>{if(!t)return t;if("string"==typeof t)return this.isLoon()?t:this.isQuanX()?{"open-url":t}:this.isSurge()?{url:t}:void 0;if("object"==typeof t){if(this.isLoon()){let e=t.openUrl||t.url||t["open-url"],s=t.mediaUrl||t["media-url"];return{openUrl:e,mediaUrl:s}}if(this.isQuanX()){let e=t["open-url"]||t.url||t.openUrl,s=t["media-url"]||t.mediaUrl;return{"open-url":e,"media-url":s}}if(this.isSurge()){let e=t.url||t.openUrl||t["open-url"];return{url:e}}}};if(this.isMute||(this.isSurge()||this.isLoon()?$notification.post(e,s,i,o(r)):this.isQuanX()&&$notify(e,s,i,o(r))),!this.isMuteLog){let t=["","==============📣系统通知📣=============="];t.push(e),s&&t.push(s),i&&t.push(i),console.log(t.join("\n")),this.logs=this.logs.concat(t)}}log(...t){t.length>0&&(this.logs=[...this.logs,...t]),console.log(t.join(this.logSeparator))}logErr(t,e){const s=!this.isSurge()&&!this.isQuanX()&&!this.isLoon();s?this.log("",`❗️${this.name}, 错误!`,t.stack):this.log("",`❗️${this.name}, 错误!`,t)}wait(t){return new Promise(e=>setTimeout(e,t))}done(t={}){const e=(new Date).getTime(),s=(e-this.startTime)/1e3;this.log("",`🔔${this.name}, 结束! 🕛 ${s} 秒`),this.log(),(this.isSurge()||this.isQuanX()||this.isLoon())&&$done(t)}}(t,e)}
