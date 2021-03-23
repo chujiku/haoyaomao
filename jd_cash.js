@@ -1,373 +1,376 @@
-/ *
-签到领现金，每日2毛〜5毛
+/*
+签到领现金，每日2毛～5毛
 可互助，助力码每日不变，只变日期
 活动入口：京东APP搜索领现金进入
-已支持IOS双京东账号，Node.js支持N个京东账号
-脚本兼容：QuantumultX，Surge，Loon，JSBox，Node.js
-============ Quantumultx ===============
+已支持IOS双京东账号,Node.js支持N个京东账号
+脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
+============Quantumultx===============
 [task_local]
-＃签到领现金
-2 0-23 / 4 * * * https://gitee.com/lxk0301/jd_scripts/raw/master/ jd_cash .js，tag =签到领现金，img-url = https：//raw.githubusercontent.com/Orz -3 / mini / master / Color / jd.png，启用= true
-===============月球===============
-[脚本]
-cron“ 2 0-23 / 4 * * *” script-path = https：//gitee.com/lxk0301/jd_scripts/raw/master/ jd_cash .js，tag =签到领现金
-==============浪涌==================
-签到领现金= type = cron，cronexp =“ 2 0-23 / 4 * * *”，唤醒系统= 1，超时= 3600，脚本路径= https：//gitee.com/lxk0301/jd_scripts/raw/ master / jd_cash .js
+#签到领现金
+2 0-23/4 * * * https://gitee.com/lxk0301/jd_scripts/raw/master/jd_cash.js, tag=签到领现金, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+
+================Loon==============
+[Script]
+cron "2 0-23/4 * * *" script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_cash.js,tag=签到领现金
+
+===============Surge=================
+签到领现金 = type=cron,cronexp="2 0-23/4 * * *",wake-system=1,timeout=3600,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_cash.js
+
 ============小火箭=========
-签到领现金= type = cron，script-path = https：//gitee.com/lxk0301/jd_scripts/raw/master/ jd_cash .js，cronexpr =“ 2 0-23 / 4 * * *”，超时= 3600， enable = true
- * /
-const  $  =  new  Env （'签到领现金' ）；
-const  notify  =  $ 。isNode （）吗？要求（'./sendNotify' ）：'' ;
-//Node.js用户请在jdCookie.js处填充京东ck;
-const  jdCookieNode  =  $ 。isNode （）吗？require （'./jdCookie.js' ）：'' ;
-让jdNotify = true ; //是否关闭通知，false打开通知推送，true关闭通知推送   
-// IOS等用户直接用NobyDa的jd cookie
-让 cookiesArr  =  [ ] ， cookie  =  '' ， 消息;
-const  randomCount  =  $ 。isNode （）吗？20：5 ;
-const  InvitationCodes  =  [
-  `` ，
+签到领现金 = type=cron,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_cash.js, cronexpr="2 0-23/4 * * *", timeout=3600, enable=true
+ */
+const $ = new Env('签到领现金');
+const notify = $.isNode() ? require('./sendNotify') : '';
+//Node.js用户请在jdCookie.js处填写京东ck;
+const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
+let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭通知推送
+//IOS等用户直接用NobyDa的jd cookie
+let cookiesArr = [], cookie = '', message;
+const randomCount = $.isNode() ? 20 : 5;
+const inviteCodes = [
+  ``,
   ``
 ]
-如果 （$ 。isNode （）） {
-  对象。键（jdCookieNode ）。forEach （（项目） =>  {
-    cookiesArr 。推送（jdCookieNode [ item ] ）
-  } ）
-  如果 （过程。ENV 。JD_DEBUG  && 过程。ENV 。JD_DEBUG  ===  '假' ） 的控制台。log  =  （） =>  { } ;
-} 其他 {
-  cookiesArr  =  [ $ 。getdata （'CookieJD' ）， $ 。getdata （'CookieJD2' ）， ... jsonParse （$ 。getdata （'CookiesJD' ） ||  “ []” ）。映射（项 => 项。饼干）] 。滤波器（项目 => ！ ！项）;
+if ($.isNode()) {
+  Object.keys(jdCookieNode).forEach((item) => {
+    cookiesArr.push(jdCookieNode[item])
+  })
+  if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {};
+} else {
+  cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
-const  JD_API_HOST  =  'https: //api.m.jd.com/client.action ' ;
-让 allMessage  =  '' ;
-！（异步 （） =>  {
-  如果 （！cookiesArr [ 0 ] ） {
-    $ 。msg （$ 。name ， '【提示】请先获取京东账号一cookie \ n直接使用NobyDa的京东签到获取' ， 'https: //bean.m.jd.com/bean/signIndex.action ' ， { “ open-url“：” https://bean.m.jd.com/bean/signIndex.action“ } ）；
-    回报;
+const JD_API_HOST = 'https://api.m.jd.com/client.action';
+let allMessage = '';
+!(async () => {
+  if (!cookiesArr[0]) {
+    $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
+    return;
   }
-  等待 requireConfig （）
-  等待 getAuthorShareCode （）;
-  对于 （让 我 =  0 ; 我 <  cookiesArr 。长度; 我++ ） {
-    如果 （cookiesArr [ i ] ） {
-      cookie  =  cookiesArr [ i ] ；
-      $ 。用户名 =  decodeURIComponent （饼干。匹配（/ pt_pin = （。+？） ; /） && 饼干。匹配（/ pt_pin = （。+？） ; /）[ 1 ] ）
-      $ 。指数 =  i  +  1 ;
-      $ 。isLogin  =  true ;
-      $ 。nickName  =  '' ;
-      消息 =  '' ;
-      等待 TotalBean （）;
-      控制台。日志（`\ n ******开始【京东账号$ { $ 。索引}】$ { $ 。昵称 ||  $ 。用户名} ********* \ N` ）;
-      如果 （！$ 。isLogin ） {
-        $ 。味精（$ 。名称， `【提示】饼干已失效` ， `京东账号$ { $ 。指数}  $ { $ 。绰号 ||  $ 。用户名} \ n请重新登录获取\ nhttps：//bean.m。 jd.com / bean / signIndex.action` ， { “ open-url”：“ https://bean.m.jd.com/bean/signIndex.action” } ）；
+  await requireConfig()
+  await getAuthorShareCode();
+  for (let i = 0; i < cookiesArr.length; i++) {
+    if (cookiesArr[i]) {
+      cookie = cookiesArr[i];
+      $.UserName = decodeURIComponent(cookie.match(/pt_pin=(.+?);/) && cookie.match(/pt_pin=(.+?);/)[1])
+      $.index = i + 1;
+      $.isLogin = true;
+      $.nickName = '';
+      message = '';
+      await TotalBean();
+      console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
+      if (!$.isLogin) {
+        $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
 
-        如果 （$ 。isNode （）） {
-          等待 通知。sendNotify （` $ { $ 。名}饼干已失效- $ { $ 。用户名} ` ， `京东账号$ { $ 。指数}  $ { $ 。用户名} \ n请重新登录获取cookie` ）;
+        if ($.isNode()) {
+          await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
         }
-        继续
+        continue
       }
-      等待 jdCash （）
+      await jdCash()
     }
   }
-  如果 （allMessage ） {
-    如果 （$ 。isNode （） &&  （过程。ENV 。CASH_NOTIFY_CONTROL？过程。ENV 。CASH_NOTIFY_CONTROL  ===  '假'：！！1 ）） 的await 通知。sendNotify （$ 。name ， allMessage ）;
-    $ 。msg （$ 。name ， '' ， allMessage ）;
+  if (allMessage) {
+    if ($.isNode() && (process.env.CASH_NOTIFY_CONTROL ? process.env.CASH_NOTIFY_CONTROL === 'false' : !!1)) await notify.sendNotify($.name, allMessage);
+    $.msg($.name, '', allMessage);
   }
-} ）（）
-    。抓（（e ） =>  {
-      $ 。日志（'' ， `❌ $ { $ 。名字}，失败原因：$ { é } `！ ， '' ）
-    } ）
-    。最后（（） =>  {
-      $ 。完成（）;
-    } ）
-异步 功能 jdCash （） {
-  等待 索引（）
-  等待 shareCodesFormat （）
-  等待 帮助朋友（）
-  等待 getReward （）
-  等待 getReward （'2' ）
-  等待 索引（true ）
-  等待 showMsg （）
+})()
+    .catch((e) => {
+      $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
+    })
+    .finally(() => {
+      $.done();
+    })
+async function jdCash() {
+  await index()
+  await shareCodesFormat()
+  await helpFriends()
+  await getReward()
+  await getReward('2')
+  await index(true)
+  await showMsg()
 }
-函数 索引（info = false ） {
-  返回 新的 Promise （（resolve ） =>  {
-    $ 。get （taskUrl （“ cash_mob_home” ，）， async  （err ， resp ， data ） =>  {
-      尝试 {
-        如果 （err ） {
-          控制台。日志（` $ { JSON 。字符串化（ERR ）} ` ）
-          控制台。日志（` $ { $ 。名} API请求失败，请检查网路重试` ）
-        } 其他 {
-          如果 （safeGet （数据）） {
-            数据 =  JSON 。解析（数据）;
-            如果（数据。代码=== 0  && 数据。数据。结果）{
-              如果（info ）{
-                如果 （讯息） {
-                  message  + =  `当前现金：$ { data 。数据。结果。signMoney }元` ;
-                  allMessage  + =  `京东账号$ { $ 。索引} $ { $ 。昵称} \ n $ {消息} $ { $ 。索引 ！==  cookiesArr 。长度？'\ n \ n'：'' } ` ;
+function index(info=false) {
+  return new Promise((resolve) => {
+    $.get(taskUrl("cash_mob_home",), async (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`${JSON.stringify(err)}`)
+          console.log(`${$.name} API请求失败，请检查网路重试`)
+        } else {
+          if (safeGet(data)) {
+            data = JSON.parse(data);
+            if(data.code===0 && data.data.result){
+              if(info){
+                if (message) {
+                  message += `当前现金：${data.data.result.signMoney}元`;
+                  allMessage += `京东账号${$.index}${$.nickName}\n${message}${$.index !== cookiesArr.length ? '\n\n' : ''}`;
                 }
-                message  + =  `当前现金：$ { data 。数据。结果。signMoney }元` ;
-                返回
+                message += `当前现金：${data.data.result.signMoney}元`;
+                return
               }
-              // console.log（`您的助力码为$ {data.data.result.inviteCode}`）
-              控制台。日志（`\ n【京东账号$ { $ 。指数}（ $ { $ 。绰号 ||  $ 。用户名}）的$ { $ 。名}好友互助码】$ {数据。数据。结果。inviteCode } \ n ` ）;
-              让 helpInfo  =  {
-                'inviteCode'：数据。数据。结果。邀请代码，
-                'shareDate'：数据。数据。结果。shareDate
+              // console.log(`您的助力码为${data.data.result.inviteCode}`)
+              console.log(`\n【京东账号${$.index}（${$.UserName}）的${$.name}好友互助码】${data.data.result.inviteCode}\n`);
+              let helpInfo = {
+                'inviteCode': data.data.result.inviteCode,
+                'shareDate': data.data.result.shareDate
               }
-              $ 。shareDate  = 数据。数据。结果。shareDate ;
-              // $ .log（`shareDate：$ {$。shareDate}`）
-              // console.log（helpInfo）
-              对于（让 任务 的 数据。数据。结果。taskInfos ）{
-                如果 （任务。键入 ===  4 ） {
-                  对于 （让 我 = 任务。doTimes ; 我 < 任务。倍;  ++我） {
-                    控制台。日志（`去做$ {任务。名}任务$ {我+ 1 } / $ {任务。倍} ` ）
-                    的await  doTask （任务，类型， 任务。跳。PARAMS 。skuId ）
-                    等待 $ 。等待（5000 ）
+              $.shareDate = data.data.result.shareDate;
+              // $.log(`shareDate: ${$.shareDate}`)
+              // console.log(helpInfo)
+              for(let task of data.data.result.taskInfos){
+                if (task.type === 4) {
+                  for (let i = task.doTimes; i < task.times; ++i) {
+                    console.log(`去做${task.name}任务 ${i+1}/${task.times}`)
+                    await doTask(task.type, task.jump.params.skuId)
+                    await $.wait(5000)
                   }
                 }
-                否则 ，如果 （任务。键入 ===  2 ） {
-                  对于 （让 我 = 任务。doTimes ; 我 < 任务。倍;  ++我） {
-                    控制台。日志（`去做$ {任务。名}任务$ {我+ 1 } / $ {任务。倍} ` ）
-                    的await  doTask （任务，类型， 任务。跳。PARAMS 。shopId ）
-                    等待 $ 。等待（5000 ）
+                else if (task.type === 2) {
+                  for (let i = task.doTimes; i < task.times; ++i) {
+                    console.log(`去做${task.name}任务 ${i+1}/${task.times}`)
+                    await doTask(task.type, task.jump.params.shopId)
+                    await $.wait(5000)
                   }
                 }
-                否则 如果 （任务。键入 ===  16  || 任务。键入=== 3  || 任务。键入=== 5  || 任务。键入=== 17  || 任务。键入=== 21 ） {
-                  对于 （让 我 = 任务。doTimes ; 我 < 任务。倍;  ++我） {
-                    控制台。日志（`去做$ {任务。名}任务$ {我+ 1 } / $ {任务。倍} ` ）
-                    的await  doTask （任务，类型， 任务。跳。PARAMS 。网址）
-                    等待 $ 。等待（5000 ）
+                else if (task.type === 16 || task.type===3 || task.type===5 || task.type===17 || task.type===21) {
+                  for (let i = task.doTimes; i < task.times; ++i) {
+                    console.log(`去做${task.name}任务 ${i+1}/${task.times}`)
+                    await doTask(task.type, task.jump.params.url)
+                    await $.wait(5000)
                   }
                 }
               }
             }
           }
         }
-      } 抓住 （e ） {
-        $ 。logErr （e ， resp ）
-      } 最后 {
-        解决（数据）;
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve(data);
       }
-    } ）
-  } ）
+    })
+  })
 }
-异步 功能 helpFriends （） {
-  $ 。canHelp  =  true
-  对于 （让 代码 的 $ 。newShareCodes ） {
-    控制台。日志（`去帮助好友$ { code [ 'inviteCode' ] } ` ）
-    等待 helpFriend （代码）
-    如果（！$ 。canHelp ） 中断
-    等待 $ 。等待（1000 ）
+async function helpFriends() {
+  $.canHelp = true
+  for (let code of $.newShareCodes) {
+    console.log(`去帮助好友${code['inviteCode']}`)
+    await helpFriend(code)
+    if(!$.canHelp) break
+    await $.wait(1000)
   }
-  //如果（（helpAuthor && $ .authorCode）{
-  // for（让$ .authorCode的helpInfo）{
-  // console.log（`去帮助好友$ {helpInfo ['inviteCode']}`）
-  //等待helpFriend（helpInfo）
-  // if（！$。canHelp）中断
-  //等待$ .wait（1000）
-  //}
-  //}
+  // if (helpAuthor && $.authorCode) {
+  //   for(let helpInfo of $.authorCode){
+  //     console.log(`去帮助好友${helpInfo['inviteCode']}`)
+  //     await helpFriend(helpInfo)
+  //     if(!$.canHelp) break
+  //     await $.wait(1000)
+  //   }
+  // }
 }
-函数 helpFriend （helpInfo ） {
-  返回 新的 Promise （（resolve ） =>  {
-    $ 。get （taskUrl （“ cash_mob_assist” ， { ... helpInfo ，“ source”：1 } ）， （err ， resp ， data ） =>  {
-      尝试 {
-        如果 （err ） {
-          控制台。日志（` $ { JSON 。字符串化（ERR ）} ` ）
-          控制台。日志（` $ { $ 。名} API请求失败，请检查网路重试` ）
-        } 其他 {
-          如果 （safeGet （数据）） {
-            数据 =  JSON 。解析（数据）;
-            如果（ 数据。代码 ===  0  && 数据。数据。bizCode  ===  0 ）{
-              控制台。日志（`助力成功，获得$ {数据。数据。结果。cashStr } ` ）
-              // console.log（data.data.result.taskInfos）
-            } 否则 如果 （数据。数据。bizCode === 207 ）{
-              控制台。日志（数据。数据。bizMsg ）
-              $ 。canHelp  = 假
-            } 其他{
-              控制台。日志（数据。数据。bizMsg ）
+function helpFriend(helpInfo) {
+  return new Promise((resolve) => {
+    $.get(taskUrl("cash_mob_assist", {...helpInfo,"source":1}), (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`${JSON.stringify(err)}`)
+          console.log(`${$.name} API请求失败，请检查网路重试`)
+        } else {
+          if (safeGet(data)) {
+            data = JSON.parse(data);
+            if( data.code === 0 && data.data.bizCode === 0){
+              console.log(`助力成功，获得${data.data.result.cashStr}`)
+              // console.log(data.data.result.taskInfos)
+            } else if (data.data.bizCode===207){
+              console.log(data.data.bizMsg)
+              $.canHelp = false
+            } else{
+              console.log(data.data.bizMsg)
             }
           }
         }
-      } 抓住 （e ） {
-        $ 。logErr （e ， resp ）
-      } 最后 {
-        解决（数据）;
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve(data);
       }
-    } ）
-  } ）
+    })
+  })
 }
-函数 doTask （type ，taskInfo ） {
-  返回 新的 Promise （（resolve ） =>  {
-    $ 。get （taskUrl （“ cash_doTask” ，{ “ type”：type ，“ taskInfo”：taskInfo } ）， （err ， resp ， data ） =>  {
-      尝试 {
-        如果 （err ） {
-          控制台。日志（` $ { JSON 。字符串化（ERR ）} ` ）
-          控制台。日志（` $ { $ 。名} API请求失败，请检查网路重试` ）
-        } 其他 {
-          如果 （safeGet （数据）） {
-            数据 =  JSON 。解析（数据）;
-            如果（ 数据。代码 ===  0 ）{
-              控制台。日志（`任务完成成功` ）
-              // console.log（data.data.result.taskInfos）
-            }其他{
-              控制台。日志（数据）
+function doTask(type,taskInfo) {
+  return new Promise((resolve) => {
+    $.get(taskUrl("cash_doTask",{"type":type,"taskInfo":taskInfo}), (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`${JSON.stringify(err)}`)
+          console.log(`${$.name} API请求失败，请检查网路重试`)
+        } else {
+          if (safeGet(data)) {
+            data = JSON.parse(data);
+            if( data.code === 0){
+              console.log(`任务完成成功`)
+              // console.log(data.data.result.taskInfos)
+            }else{
+              console.log(data)
             }
           }
         }
-      } 抓住 （e ） {
-        $ 。logErr （e ， resp ）
-      } 最后 {
-        解决（数据）;
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve(data);
       }
-    } ）
-  } ）
+    })
+  })
 }
-函数 getReward （source  =  1 ） {
-  返回 新的 Promise （（resolve ） =>  {
-    $ 。得到（taskUrl （“cash_mob_reward” ，{ “源”：数（源），“rewardNode” ：“” } ）， （ERR ， RESP ， 数据） =>  {
-      尝试 {
-        如果 （err ） {
-          控制台。日志（` $ { JSON 。字符串化（ERR ）} ` ）
-          控制台。日志（` $ { $ 。名} API请求失败，请检查网路重试` ）
-        } 其他 {
-          如果 （safeGet （数据）） {
-            数据 =  JSON 。解析（数据）;
-            如果 （数据。代码 ===  0  && 数据。数据。bizCode  ===  0 ） {
-              控制台。日志（`领奖成功，$ {数据。数据。结果。shareRewardTip }【$ {数据。数据。结果。shareRewardAmount }】` ）
-              message  + =  `领奖成功，$ { data 。数据。结果。shareRewardTip }【$ {数据。数据。结果。shareRewardAmount }元】\ n` ;
-              // console.log（data.data.result.taskInfos）
-            } 其他 {
-              // console.log（`领奖失败，$ {data.data.bizMsg}`）
+function getReward(source = 1) {
+  return new Promise((resolve) => {
+    $.get(taskUrl("cash_mob_reward",{"source": Number(source),"rewardNode":""}), (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`${JSON.stringify(err)}`)
+          console.log(`${$.name} API请求失败，请检查网路重试`)
+        } else {
+          if (safeGet(data)) {
+            data = JSON.parse(data);
+            if (data.code === 0 && data.data.bizCode === 0) {
+              console.log(`领奖成功，${data.data.result.shareRewardTip}【${data.data.result.shareRewardAmount}】`)
+              message += `领奖成功，${data.data.result.shareRewardTip}【${data.data.result.shareRewardAmount}元】\n`;
+              // console.log(data.data.result.taskInfos)
+            } else {
+              // console.log(`领奖失败，${data.data.bizMsg}`)
             }
           }
         }
-      } 抓住 （e ） {
-        $ 。logErr （e ， resp ）
-      } 最后 {
-        解决（数据）;
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve(data);
       }
-    } ）
-  } ）
+    })
+  })
 }
 
-函数 showMsg （） {
-  返回 新的 Promise （resolve  =>  {
-    如果 （！jdNotify ） {
-      $ 。msg （$ 。name ， '' ， ` $ { message } ` ）;
-    } 其他 {
-      $ 。日志（`京东账号$ { $ 。索引} $ { $ 。昵称} \ n $ {消息} ` ）;
+function showMsg() {
+  return new Promise(resolve => {
+    if (!jdNotify) {
+      $.msg($.name, '', `${message}`);
+    } else {
+      $.log(`京东账号${$.index}${$.nickName}\n${message}`);
     }
-    解决（）
-  } ）
+    resolve()
+  })
 }
-函数 readShareCode （） {
-  控制台。日志（`开始` ）
-  返回 新的 Promise （异步 resolve  =>  {
-    $ 。get （{ url：“ https://github.com/ZFeng3242/RandomShareCode/raw/main/JD_Cash.json” ，标头：{
-        “ User-Agent”：“ Mozilla / 5.0（iPhone； CPU iPhone OS 13_2_3，如Mac OS X）AppleWebKit / 605.1.15（KHTML，如Gecko）版本/13.0.3 Mobile / 15E148 Safari / 604.1 Edg / 87.0.4280.88”
-      } } ， 异步 （err ， resp ， data ） =>  {
-      尝试 {
-        如果 （err ） {
-          控制台。日志（` $ { JSON 。字符串化（ERR ）} ` ）
-          控制台。日志（` $ { $ 。名} API请求失败，请检查网路重试` ）
-        } 其他 {
-          如果 （数据） {
-            控制台。log （`随机取助力码放到您固定的互助码后面（不影响现有固定互助）` ）
-            数据 =  JSON 。解析（数据）;
+function readShareCode() {
+  console.log(`开始`)
+  return new Promise(async resolve => {
+    $.get({url: "https://github.com/ZFeng3242/RandomShareCode/raw/main/JD_Cash.json",headers:{
+        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
+      }}, async (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`${JSON.stringify(err)}`)
+          console.log(`${$.name} API请求失败，请检查网路重试`)
+        } else {
+          if (data) {
+            console.log(`随机取助力码放到您固定的互助码后面(不影响已有固定互助)`)
+            data = JSON.parse(data);
           }
         }
-      } 抓住 （e ） {
-        $ 。logErr （e ， resp ）
-      } 最后 {
-        解决（数据）;
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve(data);
       }
-    } ）
-    等待 $ 。等待（10000 ）;
-    解决（）
-  } ）
+    })
+    await $.wait(10000);
+    resolve()
+  })
 }
 //格式化助力码
-函数 shareCodesFormat （） {
-  返回 新的 Promise （异步 resolve  =>  {
-    // console.log（`第$ {$。index}个京东账号的助力码:::: $ {$。shareCodesArr [$。index-1]}`）
-    $ 。newShareCodes  =  [ ] ;
-    如果 （$ 。shareCodesArr [ $ 。索引 -  1 ] ） {
-      $ 。newShareCodes  =  $ 。shareCodesArr [ $ 。索引 -  1 ] 。分割（'@' ）;
-    } 其他 {
-      控制台。日志（`由于您第$ { $ 。指数}个京东账号未提供shareCode，将采纳本脚本自带的助力码\ N` ）
-      const  tempIndex  =  $ 。index  > 邀请代码。长度？（inviteCodes 。长度 -  1 ）：（$ 。索引 -  1 ）;
-      $ 。newShareCodes  = 邀请代码[ tempIndex ] 。分割（'@' ）;
-      让 authorCode  =  deepCopy （$ 。authorCode ）
-      $ 。newShareCodes  =  [ ... （authorCode 。映射（（项目， 指数） =>  authorCode [索引]  = 项[ 'inviteCode' ] ））， ... $ 。newShareCodes ] ;
+function shareCodesFormat() {
+  return new Promise(async resolve => {
+    // console.log(`第${$.index}个京东账号的助力码:::${$.shareCodesArr[$.index - 1]}`)
+    $.newShareCodes = [];
+    if ($.shareCodesArr[$.index - 1]) {
+      $.newShareCodes = $.shareCodesArr[$.index - 1].split('@');
+    } else {
+      console.log(`由于您第${$.index}个京东账号未提供shareCode,将采纳本脚本自带的助力码\n`)
+      const tempIndex = $.index > inviteCodes.length ? (inviteCodes.length - 1) : ($.index - 1);
+      $.newShareCodes = inviteCodes[tempIndex].split('@');
+      let authorCode = deepCopy($.authorCode)
+      $.newShareCodes = [...(authorCode.map((item, index) => authorCode[index] = item['inviteCode'])), ...$.newShareCodes];
     }
-    const  readShareCodeRes  = 等待 readShareCode （）;
-    如果 （readShareCodeRes  &&  readShareCodeRes 。代码 ===  200 ） {
-      $ 。newShareCodes  =  [ ...新 集（[ ... $ 。newShareCodes ， ... （readShareCodeRes 。数据 ||  [ ] ）] ）] ;
+    const readShareCodeRes = await readShareCode();
+    if (readShareCodeRes && readShareCodeRes.code === 200) {
+      $.newShareCodes = [...new Set([...$.newShareCodes, ...(readShareCodeRes.data || [])])];
     }
-    $ 。newShareCodes 。映射（（项目， 指数） =>  $ 。newShareCodes [索引]  =  {  “inviteCode” ：项， “shareDate” ：$ 。shareDate  } ）
-    控制台。日志（`第$ { $ 。指数}个京东账号将要助力的好友$ { JSON 。字符串化（$ 。newShareCodes ）} ` ）
-    解决（）;
-  } ）
+    $.newShareCodes.map((item, index) => $.newShareCodes[index] = { "inviteCode": item, "shareDate": $.shareDate })
+    console.log(`第${$.index}个京东账号将要助力的好友${JSON.stringify($.newShareCodes)}`)
+    resolve();
+  })
 }
 
-函数 requireConfig （） {
-  返回 新的 Promise （resolve  =>  {
-    控制台。日志（`开始获取$ { $ 。名}配置文件\ N` ）;
-    让 shareCodes  =  [ ] ;
-    如果 （$ 。isNode （）） {
-      如果 （过程。ENV 。JD_CASH_SHARECODES ） {
-        如果 （过程。ENV 。JD_CASH_SHARECODES 。的indexOf （'\ n' ） >  - 1 ） {
-          shareCodes  = 流程。ENV 。JD_CASH_SHARECODES 。分割（'\ n' ）;
-        } 其他 {
-          shareCodes  = 流程。ENV 。JD_CASH_SHARECODES 。分割（'＆' ）;
+function requireConfig() {
+  return new Promise(resolve => {
+    console.log(`开始获取${$.name}配置文件\n`);
+    let shareCodes = [];
+    if ($.isNode()) {
+      if (process.env.JD_CASH_SHARECODES) {
+        if (process.env.JD_CASH_SHARECODES.indexOf('\n') > -1) {
+          shareCodes = process.env.JD_CASH_SHARECODES.split('\n');
+        } else {
+          shareCodes = process.env.JD_CASH_SHARECODES.split('&');
         }
       }
     }
-    控制台。日志（`共$ { cookiesArr 。长度}个京东账号\ N` ）;
-    $ 。shareCodesArr  =  [ ] ；
-    如果 （$ 。isNode （）） {
-      对象。密钥（shareCodes ）。forEach （（项目） =>  {
-        如果 （shareCodes [项目] ） {
-          $ 。shareCodesArr 。推送（shareCodes [ item ] ）
+    console.log(`共${cookiesArr.length}个京东账号\n`);
+    $.shareCodesArr = [];
+    if ($.isNode()) {
+      Object.keys(shareCodes).forEach((item) => {
+        if (shareCodes[item]) {
+          $.shareCodesArr.push(shareCodes[item])
         }
-      } ）
+      })
     }
-    控制台。日志（`您提供了$ { $ 。shareCodesArr 。长度}个账号的$ { $ 。名}助力码\ N` ）;
-    解决（）
-  } ）
+    console.log(`您提供了${$.shareCodesArr.length}个账号的${$.name}助力码\n`);
+    resolve()
+  })
 }
-函数 deepCopy （obj ） {
-  让 objClone  =  Array 。isArray （obj ）吗？[ ]：{ } ;
-  如果 （obj  &&  typeof  obj  ===  “ object” ） {
-    对于 （让 关键 的 OBJ ） {
-      如果 （OBJ 。hasOwnProperty （键）） {
+function deepCopy(obj) {
+  let objClone = Array.isArray(obj) ? [] : {};
+  if (obj && typeof obj === "object") {
+    for (let key in obj) {
+      if (obj.hasOwnProperty(key)) {
         //判断ojb子元素是否为对象，如果是，递归复制
-        if  （obj [ key ]  &&  typeof  obj [ key ]  ===  “ object” ） {
-          objClone [键]  =  deepCopy （obj [键] ）;
-        } 其他 {
+        if (obj[key] && typeof obj[key] === "object") {
+          objClone[key] = deepCopy(obj[key]);
+        } else {
           //如果不是，简单复制
-          objClone [键]  =  obj [键] ;
+          objClone[key] = obj[key];
         }
       }
     }
   }
-  返回 objClone ;
+  return objClone;
 }
-函数 taskUrl （functionId ， body  =  { } ） {
-  返回 {
-    网址：` $ { JD_API_HOST }？functionId = $ { functionId }＆身体= $ {逃生（JSON 。字符串化（体））}＆的appid = CashRewardMiniH5Env＆的appid = 9.1.0` ，
-    标头：{
-      “ Cookie”：cookie ，
-      '主机'：'api.m.jd.com' ，
-      '连接'：'保持活动状态' ，
-      'Content-Type'：'application / json' ，
-      'Referer'：'http : //wq.jd.com/wxapp/pages/hd-interaction/index/index ' ，
-      “用户代理”：$ 。isNode （）吗？（过程。ENV 。JD_USER_AGENT？过程。ENV 。JD_USER_AGENT：（要求（'./USER_AGENTS' ）。 USER_AGENT ））：（$ 。的GetData （'JDUA' ）？ $ 。的GetData （'JDUA' ）： “jdapp; iPhone ; 9.2.2; 14.2;％E4％BA％AC％E4％B8％9C / 9.2.2 CFNetwork / 1206 Darwin / 20.1.0“），
-      'Accept-Language'：'zh-cn' ，
-      'Accept-Encoding'：'gzip，deflate，br' ，
+function taskUrl(functionId, body = {}) {
+  return {
+    url: `${JD_API_HOST}?functionId=${functionId}&body=${escape(JSON.stringify(body))}&appid=CashRewardMiniH5Env&appid=9.1.0`,
+    headers: {
+      'Cookie': cookie,
+      'Host': 'api.m.jd.com',
+      'Connection': 'keep-alive',
+      'Content-Type': 'application/json',
+      'Referer': 'http://wq.jd.com/wxapp/pages/hd-interaction/index/index',
+      'User-Agent': $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0"),
+      'Accept-Language': 'zh-cn',
+      'Accept-Encoding': 'gzip, deflate, br',
     }
   }
 }
 
-函数 getAuthorShareCode （url  =  “ https://github.com/ZFeng3242/updateTeam/raw/master/shareCodes/jd_updateCash.json” ） {
+function getAuthorShareCode(url = "https://github.com/ZFeng3242/updateTeam/raw/master/shareCodes/jd_updateCash.json") {
   return new Promise(resolve => {
     $.get({url, headers:{
         "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
