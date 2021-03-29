@@ -66,7 +66,7 @@ let FEED_NUM = ($.getdata('joyFeedCount') * 1) || 10;   //喂食数量默认10g,
       subTitle = '';
       if ($.isNode()) {
         if (process.env.JOY_FEED_COUNT) {
-         if ([0, 10, 20, 40, 80].indexOf(process.env.JOY_FEED_COUNT * 1) > -1) {
+          if ([10, 20, 40, 80].indexOf(process.env.JOY_FEED_COUNT * 1) > -1) {
             FEED_NUM = process.env.JOY_FEED_COUNT ? process.env.JOY_FEED_COUNT * 1 : FEED_NUM;
           } else {
             console.log(`您输入的 JOY_FEED_COUNT 为非法数字，请重新输入`);
@@ -95,7 +95,6 @@ function showMsg() {
 function feedPets(feedNum) {
   return new Promise(resolve => {
     console.log(`您设置的喂食数量::${FEED_NUM}g\n`);
-    if (FEED_NUM === 0) { console.log(`跳出喂食`);resolve();return }
     console.log(`实际的喂食数量::${feedNum}g\n`);
     const options = {
       url: `${JD_API_HOST}/pet/feed?feedCount=${feedNum}`,
