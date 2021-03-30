@@ -1,29 +1,30 @@
 /*
- * @Author: lxk0301 
+ * @Author: LXK9301
  * @Date: 2020-11-03 18:12:38
- * @Last Modified by: lxk0301
+ * @Last Modified by: LXK9301
  * @Last Modified time: 2020-12-20 12:27:18
 */
 /*
-京东全民开红包（京东app->首页->领券->锦鲤红包）
+京东全民开红包
+活动入口：京东APP首页-领券-锦鲤红包
 已完成功能：
 ①浏览活动
 ②关注频道
 ③领取红包
 未实现功能：
 领3张券功能,邀请好友未实现
-
 支持京东双账号
 脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
-QuantumultX
+================QuantumultX==================
 [task_local]
 #京东全民开红包
-1 1 * * * https://raw.githubusercontent.com/ZFeng3242/JD-haoyangmao/main/scripts/jd_redPacket.js, tag=京东全民开红包, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_redPacket.png, enabled=true
-Loon
+1 1 * * * https://gitee.com/lxk0301/jd_scripts/raw/master/jd_redPacket.js, tag=京东全民开红包, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_redPacket.png, enabled=true
+===================Loon==============
 [Script]
-cron "1 1 * * *" script-path=https://raw.githubusercontent.com/ZFeng3242/JD-haoyangmao/main/scripts/jd_redPacket.js, tag=京东全民开红包
-Surge
-京东全民开红包 = type=cron,cronexp=1 1 * * *,wake-system=1,timeout=20,script-path=https://raw.githubusercontent.com/ZFeng3242/JD-haoyangmao/main/scripts/jd_redPacket.js
+cron "1 1 * * *" script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_redPacket.js, tag=京东全民开红包
+===============Surge===============
+[Script]
+京东全民开红包 = type=cron,cronexp=1 1 * * *,wake-system=1,timeout=3600,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_redPacket.js
  */
 const $ = new Env('京东全民开红包');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -38,13 +39,7 @@ if ($.isNode()) {
   })
   if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {};
 } else {
-  let cookiesData = $.getdata('CookiesJD') || "[]";
-  cookiesData = jsonParse(cookiesData);
-  cookiesArr = cookiesData.map(item => item.cookie);
-  cookiesArr.reverse();
-  cookiesArr.push(...[$.getdata('CookieJD2'), $.getdata('CookieJD')]);
-  cookiesArr.reverse();
-  cookiesArr = cookiesArr.filter(item => item !== "" && item !== null && item !== undefined);
+  cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
 
 const JD_API_HOST = 'https://api.m.jd.com/api';
@@ -58,12 +53,12 @@ const JD_API_HOST = 'https://api.m.jd.com/api';
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
-      $.UserName = decodeURIComponent(cookie.match(/pt_pin=(.+?);/) && cookie.match(/pt_pin=(.+?);/)[1])
+      $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
       $.index = i + 1;
       $.isLogin = true;
       $.nickName = '';
       await TotalBean();
-      console.log(`\n开始【京东账号${$.index}】${$.nickName || $.UserName}\n`);
+      console.log(`\n****开始【京东账号${$.index}】${$.nickName || $.UserName}****\n`);
       if (!$.isLogin) {
         $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
 
@@ -84,11 +79,19 @@ const JD_API_HOST = 'https://api.m.jd.com/api';
     .finally(() => {
       $.done();
     })
-
 async function redPacket() {
-  const response = await taskHomePage();
-  if (response.code === 0) {
-    $.taskInfo = response.data.result.taskInfos;
+  try {
+    await taskHomePage();
+    await doTask();
+    await h5activityIndex();
+    await jinli_h5assist();
+  } catch (e) {
+    $.logErr(e);
+  }
+}
+async function doTask() {
+  if ($.taskHomePageData && $.taskHomePageData.code === 0) {
+    $.taskInfo = $.taskHomePageData.data.result.taskInfos;
     if ($.taskInfo && $.taskInfo.length > 0) {
       console.log(`    任务     状态  红包是否领取`);
       for (let item of $.taskInfo) {
@@ -113,9 +116,10 @@ async function redPacket() {
         }
       }
     }
+  } else {
+    console.log(`\n获取任务列表异常：${JSON.stringify($.taskHomePageData)}\n`)
   }
 }
-
 //获取任务列表
 function taskHomePage() {
   return new Promise((resolve) => {
@@ -125,7 +129,7 @@ function taskHomePage() {
           console.log(`\n${$.name}: API查询请求失败 ‼️‼️`);
           console.log(JSON.stringify(err));
         } else {
-          data = JSON.parse(data);
+          $.taskHomePageData = JSON.parse(data);
         }
       } catch (e) {
         $.logErr(e, resp);
@@ -246,6 +250,35 @@ function receiveTaskRedpacket(taskType) {
 function showMsg() {
   console.log(`${$.name}获得红包：${$.discount}元`);
 }
+function h5activityIndex() {
+  const body = {"clientInfo":{},"isjdapp":1};
+  const options = taskUrl(arguments.callee.name.toString(), body);
+  $.discount = 0;
+  $.hasOpen = 0;
+  return new Promise((resolve) => {
+    $.post(options, async (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`\n${$.name}: API查询请求失败 ‼️‼️`);
+          console.log(JSON.stringify(err));
+        } else {
+          data = JSON.parse(data);
+          if (data && data.data && data.data['result']) {
+            const rewards = data['data']['result']['rewards'] || [];
+            for (let item of rewards) {
+              $.discount += item['packetSum'];
+            }
+            if ($.discount) $.discount = $.discount.toFixed(2);
+          }
+        }
+      } catch (e) {
+        $.logErr(e, resp);
+      } finally {
+        resolve(data);
+      }
+    })
+  })
+}
 // function newReceiveRvcCouponWithTask() {
 //   const data = {"taskType":"0","extend":"","source":"couponCenter_app","pageClickKey":"CouponCenter","rcType":"1","taskId":"415","childActivityUrl":"","eid":"","shshshfpb":"","lat":"","lng":""};
 //   request(arguments.callee.name.toString(), data).then((response) => {
@@ -271,7 +304,7 @@ function TotalBean() {
         "Connection": "keep-alive",
         "Cookie": cookie,
         "Referer": "https://wqs.jd.com/my/jingdou/my.shtml?sceneval=2",
-        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0")
+        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1")
       }
     }
     $.post(options, (err, resp, data) => {
@@ -287,7 +320,7 @@ function TotalBean() {
               return
             }
             if (data['retcode'] === 0) {
-              $.nickName = data['base'].nickname;
+              $.nickName = (data['base'] && data['base'].nickname) || $.UserName;
             } else {
               $.nickName = $.UserName
             }
@@ -316,7 +349,7 @@ function taskUrl(function_id, body) {
       "Cookie": cookie,
       "Connection": "keep-alive",
       "Accept": "*/*",
-      "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0"),
+      "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
       "Referer": "https://happy.m.jd.com/babelDiy/zjyw/3ugedFa7yA6NhxLN5gw2L3PF9sQC/index.html",
       "Content-Length": "36",
       "Accept-Language": "zh-cn"
