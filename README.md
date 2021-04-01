@@ -46,8 +46,7 @@
 *  腾讯云控制台[操作说明](TencentScf/iCloud.md)
 
 ## 四丶联系我们
-*  [企鹅群](https://jq.qq.com/?_wv=1027&k=QLOGAtQZ)
-*  [tg通知群](https://t.me/JD_DX1005/)
+*  家里断网，联系不上了
 
 ## 五丶特别感谢（排名不分先后）
 ### 脚本作者：
