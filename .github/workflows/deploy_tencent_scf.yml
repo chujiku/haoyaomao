@@ -99,10 +99,9 @@ jobs:
           npm install got
           npm install tough-cookie
           npm install js-yaml
-          npm audit fix
       - name: "将Secrets里面配置的变量添加到severless.yml里面作为环境变量"
         run: |
-          if [ $JD_COOKIE ]; then sed -i "/variables/a\      JD_COOKIE: $JD_COOKIE" serverless.yml; fi;
+if [ $JD_COOKIE ]; then sed -i "/variables/a\      JD_COOKIE: $JD_COOKIE" serverless.yml; fi;
           if [ $JD_DEBUG ]; then sed -i "/variables/a\      JD_DEBUG: $JD_DEBUG" serverless.yml; fi;
           if [ $JD_USER_AGENT ]; then sed -i "/variables/a\      JD_USER_AGENT: $JD_USER_AGENT" serverless.yml; fi;
           if [ $TENCENTSCF_SOURCE_TYPE ]; then sed -i "/variables/a\      TENCENTSCF_SOURCE_TYPE: $TENCENTSCF_SOURCE_TYPE" serverless.yml; fi;
@@ -168,8 +167,8 @@ jobs:
           if [ $CFD_NOTIFY_CONTROL ]; then sed -i "/variables/a\      CFD_NOTIFY_CONTROL: $CFD_NOTIFY_CONTROL" serverless.yml; fi;
           if [ $JD_JXD_EXCHANGE ]; then sed -i "/variables/a\      JD_JXD_EXCHANGE: $JD_JXD_EXCHANGE" serverless.yml; fi;
           if [ $JXNC_NOTIFY_LEVEL ]; then sed -i "/variables/a\      JXNC_NOTIFY_LEVEL: $JXNC_NOTIFY_LEVEL" serverless.yml; fi;
-          cat serverless.yml
-          env
+cat serverless.yml
+env
       - name: "压缩文件夹"
         run: zip -r myfile.zip ./*
         
