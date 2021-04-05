@@ -10,6 +10,8 @@
 
 ## 2.下载源码
 
+[下载地址](https://github.com/ZFeng3242/JD-haoyangmao/archive/refs/heads/main.zip)
+
 ![BclSld.png](https://s1.ax1x.com/2020/11/04/BclSld.png)
 
 点击红框处下载压缩包
