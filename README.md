@@ -43,7 +43,7 @@
 ## 三丶云函数部署教程
 *  GithubAction快速部署到云函数[教程](TencentScf/tencentscf.md)
 
-*  腾讯云控制台[操作说明](TencentScf/iCloud.md)
+*  本地上传部署到腾讯云[操作说明](TencentScf/iCloud.md)
 
 ## 四丶联系我们
 *  家里断网，联系不上了
