@@ -25,7 +25,7 @@ inputs:
     - timer: #东东超市兑换奖品 #摇京豆 #京东汽车兑换
         parameters:
           name: blueCoin_clublottery_carexchange
-          cronExpression: "0 0 0 * * * *"
+          cronExpression: "59 59 23 * * * *"
           enable: true
           argument: jd_blueCoin&jd_club_lottery&jd_car_exchange
     - timer: #东东农场 #东东萌宠 #口袋书店 #京喜农场 #京东极速版签到 #京东家庭号
