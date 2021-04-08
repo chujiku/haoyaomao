@@ -9,10 +9,13 @@
 
 | NAME | 归属                         | 属性                       | 说明                                                                            |
 | ---- | :------------------------------: | :-------------------------: | :-------------------------------------------------------------------------------: |
-| TENCENT_SECRET_ID     | 腾讯云函数     | 必须                      |腾讯云函数API密钥 [SecretId](https://console.cloud.tencent.com/cam/capi)  |
-| TENCENT_SECRET_KEY    | 腾讯云函数     | 必须                      |腾讯云函数API密钥 [SecretKey](https://console.cloud.tencent.com/cam/capi)  |
-| SCF_REGION            | 腾讯云函数     | 必须                      |腾讯云函数目前所支持的地域信息，[参考取值](https://cloud.tencent.com/document/product/583/17299)  |
-| TENCENT_FUNCTION_NAME | 腾讯云函数     | 必须                      |腾讯云函数名称，例：`JDscripts`|
+| TENCENT_SECRET_ID      | 腾讯云函数     | 必须                      |腾讯云函数API密钥 [SecretId](https://console.cloud.tencent.com/cam/capi)  |
+| TENCENT_SECRET_KEY     | 腾讯云函数     | 必须                      |腾讯云函数API密钥 [SecretKey](https://console.cloud.tencent.com/cam/capi)  |
+| SCF_REGION             | 腾讯云函数     | 必须                      |腾讯云函数目前所支持的地域信息，[参考取值](https://cloud.tencent.com/document/product/583/17299)  |
+| TENCENT_FUNCTION_NAME  | 腾讯云函数     | 必须                      |腾讯云函数名称，例：`JDscripts`|
+| TENCENTSCF_SOURCE_TYPE | 腾讯云函数     | 非必须                      |腾讯云函数执行文件类型：1.本地文件-`local`，2.github-`git`，3.自定义-`custom`，如果部署在国内节点，选择1或3。默认使用gitee的方式，详细请前往 index.js文件中[查看](https://github.com/ZFeng3242/JD-haoyangmao/blob/main/index.js)|
+| TENCENTSCF_SOURCE_URL  | 腾讯云函数     | 非必须                      |当选择自定义模式，定义执行自定义远端js文件网址|
+
 
 #### 请将以上环境变量填写完全，环境变量的获取方法详见[下方](https://github.com/ZFeng3242/JD-haoyangmao/blob/main/TencentScf/tencentscf.md#2-%E5%9C%A8%E8%BF%99%E9%87%8C%E6%96%B0%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%AE%BF%E9%97%AE%E5%AF%86%E9%92%A5%E6%96%B0%E5%BB%BA%E5%AF%86%E9%92%A5)  
 
