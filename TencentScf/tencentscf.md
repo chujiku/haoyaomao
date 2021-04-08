@@ -33,9 +33,11 @@
 
 > 将SecretId和SecretKey分别配置在仓库的secrets变量里面
 
-> TENCENT_SECRET_ID对应你的SecretId的值，TENCENT_SECRET_KEY对应你的SecretKey的值
+> `TENCENT_SECRET_ID`对应你的SecretId的值，`TENCENT_SECRET_KEY`对应你的SecretKey的值
+
+> `TENCENT_FUNCTION_NAME`对应你的函数名称，请自行决定
  
-> SCF_REGION参照下方表格或腾讯云函数官方环境变量说明的[参考取值](https://cloud.tencent.com/document/product/583/17299)，对应地区自行选择（推荐中国香港）  
+> `SCF_REGION`参照下方表格或腾讯云函数官方环境变量说明的[参考取值](https://cloud.tencent.com/document/product/583/17299)，对应地区自行选择（推荐中国香港）  
 
 | 地域 | 取值                         | 
 | ---- | :------------------------------: | 
@@ -48,7 +50,9 @@
 | 亚太东南（新加坡）	| `ap-singapore` | 
 | 亚太东北（东京）	| `ap-tokyo` | 
 | 北美地区（多伦多）	| `na-toronto` | 
-| 美国西部（硅谷）	| `na-siliconvalley` |  
+| 美国西部（硅谷）	| `na-siliconvalley` |    
+
+> `TENCENTSCF_SOURCE_TYPE`对应腾讯云函数执行远端js文件的模式，`local`代表执行本地（即云函数内）文件；`git`代表执行远端github中的文件，因github的raw类型的文件被墙,此方法云函数不推荐；`custom`代表执行自定义链接的js文件，需要配合`TENCENTSCF_SOURCE_URL`变量使用，不填写默认执行给gitee远端js文件。  
 
 
 ### 3. 配置自己需要secrets变量到github中[参考这里](githubAction.md)
