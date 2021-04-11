@@ -37,8 +37,8 @@ if ($.isNode()) {
 }
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
 const inviteCodes = [
-  `ATGEC3-fsrn13aiaEqiM@AUWE5maSSnzFeDmH4iH0elA@ATGEC3-fsrn13aiaEqiM@AUWE5m6WUmDdZC2mr1XhJlQ@AUWE5m_jEzjJZDTKr3nwfkg@A06fNSRc4GIqY38pMBeLKQE2InZA@AUWE5mf7ExDZdDmH7j3wfkA@AUWE5m6jBy2cNAWX7j31Pxw@AUWE5mK2UnDddDTX61S1Mkw@AUWE5mavGyGZdWzP5iCoZwQ`,
-  `ATGEC3-fsrn13aiaEqiM@AUWE5maSSnzFeDmH4iH0elA@ATGEC3-fsrn13aiaEqiM@AUWE5m6WUmDdZC2mr1XhJlQ@AUWE5m_jEzjJZDTKr3nwfkg@A06fNSRc4GIqY38pMBeLKQE2InZA@AUWE5m6_BmTUPAGH42SpOkg@AUWE53NTIs3V8YBqthQMI@AUWE5m6yVxTJcWjWr3nRIlw`
+  `S5KkcRxwap1DfIBPynfVbcg@S5KkcOGRatCyXYGmj6LBs@S5KkcRB0Z9VbQcRP8wvcOJw@S5KkcRhga91XSIUiikvACJg@S5KkcRRlP8wDRKB_xwP9edw@S5KkcPkxMtC6eSHue56hV@S5KkcRBpMoVPUJxL8kvMNdg@S5KkcREwa9wXSJRPywqMJfQ@S5KkcRkof9QXVdR7zwaZYcg@S5KkcCVhHoi6RanmRw45R@S9_tzQhwf81DQJw@S5KkcRkwQ9lLUJh-mwfZYIQ@S5KkcMX5wsTafSkKP9rBz@S5KkcE319qyKTQ3OB4692@S5KkcNmhFgBeCQ2-9wIBN@S5KkcOFpItiyAfmyy0Ilv@S5KkcFV5dizyvWn6V7JdA`,
+  `S5KkcRxwap1DfIBPynfVbcg@S5KkcOGRatCyXYGmj6LBs@S5KkcRB0Z9VbQcRP8wvcOJw@S5KkcRhga91XSIUiikvACJg@S5KkcRRlP8wDRKB_xwP9edw@S5KkcPkxMtC6eSHue56hV@S5KkcRBpMoVPUJxL8kvMNdg@S5KkcREwa9wXSJRPywqMJfQ@S5KkcRkof9QXVdR7zwaZYcg@S5KkcCVhHoi6RanmRw45R@S9_tzQhwf81DQJw@S5KkcRkwQ9lLUJh-mwfZYIQ@S5KkcMX5wsTafSkKP9rBz@S5KkcE319qyKTQ3OB4692@S5KkcNmhFgBeCQ2-9wIBN@S5KkcOFpItiyAfmyy0Ilv@S5KkcFV5dizyvWn6V7JdA`
 ]
 let nowTimes = new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60 * 1000 + 8 * 60 * 60 * 1000);
 !(async () => {
@@ -79,7 +79,7 @@ let nowTimes = new Date(new Date().getTime() + new Date().getTimezoneOffset() * 
       await notify.sendNotify($.name, allMessage);
     }
   }
-  console.log(`\n\n开始账号内部互助 【赚京豆(微信小程序)-瓜分京豆】活动(优先内部账号互助(需内部cookie数量大于${$.assistNum || 4}个)，如有剩余助力次数则给作者lxk0301助力)\n`)
+  console.log(`\n\n开始账号内部互助 【赚京豆(微信小程序)-瓜分京豆】活动(优先内部账号互助(需内部cookie数量大于${$.assistNum || 4}个)，如有剩余助力次数则给维护者ZFeng3242助力)\n`)
   for (let i = 0; i < cookiesArr.length; i++) {
     $.canHelp = true
     if (cookiesArr[i]) {
@@ -94,9 +94,9 @@ let nowTimes = new Date(new Date().getTime() + new Date().getTimezoneOffset() * 
         }
       }
       if ($.canHelp) {
-        console.log(`开始账号内部互助 赚京豆-瓜分京豆 活动，如有剩余则给作者lxk0301助力`)
+        console.log(`开始账号内部互助 赚京豆-瓜分京豆 活动，如有剩余则给维护者ZFeng3242助力`)
         for (let j = 0; j < $.authorTuanList.length; ++j) {
-          console.log(`账号 ${$.UserName} 开始给作者lxk0301 ${$.authorTuanList[j]['assistedPinEncrypted']}助力`)
+          console.log(`账号 ${$.UserName} 开始给维护者ZFeng3242 ${$.authorTuanList[j]['assistedPinEncrypted']}助力`)
           await helpFriendTuan($.authorTuanList[j])
           if(!$.canHelp) break
         }
