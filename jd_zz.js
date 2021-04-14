@@ -9,11 +9,14 @@
 [task_local]
 # 京东赚赚
 10 0 * * * https://gitee.com/lxk0301/jd_scripts/raw/master/jd_jdzz.js, tag=京东赚赚, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdzz.png, enabled=true
+
 ================Loon==============
 [Script]
 cron "10 0 * * *" script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_jdzz.js,tag=京东赚赚
+
 ===============Surge=================
 京东赚赚 = type=cron,cronexp="10 0 * * *",wake-system=1,timeout=3600,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_jdzz.js
+
 ============小火箭=========
 京东赚赚 = type=cron,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_jdzz.js, cronexpr="10 0 * * *", timeout=3600, enable=true
  */
@@ -37,16 +40,16 @@ if ($.isNode()) {
 }
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
 const inviteCodes = [
-  `S5KkcRxwap1DfIBPynfVbcg@S5KkcOGRatCyXYGmj6LBs@S5KkcRB0Z9VbQcRP8wvcOJw@S5KkcRhga91XSIUiikvACJg@S5KkcRRlP8wDRKB_xwP9edw@S5KkcPkxMtC6eSHue56hV@S5KkcRBpMoVPUJxL8kvMNdg@S5KkcREwa9wXSJRPywqMJfQ@S5KkcRkof9QXVdR7zwaZYcg@S5KkcCVhHoi6RanmRw45R@S9_tzQhwf81DQJw@S5KkcRkwQ9lLUJh-mwfZYIQ@S5KkcMX5wsTafSkKP9rBz@S5KkcE319qyKTQ3OB4692@S5KkcNmhFgBeCQ2-9wIBN@S5KkcOFpItiyAfmyy0Ilv@S5KkcFV5dizyvWn6V7JdA`,
-  `S5KkcRxwap1DfIBPynfVbcg@S5KkcOGRatCyXYGmj6LBs@S5KkcRB0Z9VbQcRP8wvcOJw@S5KkcRhga91XSIUiikvACJg@S5KkcRRlP8wDRKB_xwP9edw@S5KkcPkxMtC6eSHue56hV@S5KkcRBpMoVPUJxL8kvMNdg@S5KkcREwa9wXSJRPywqMJfQ@S5KkcRkof9QXVdR7zwaZYcg@S5KkcCVhHoi6RanmRw45R@S9_tzQhwf81DQJw@S5KkcRkwQ9lLUJh-mwfZYIQ@S5KkcMX5wsTafSkKP9rBz@S5KkcE319qyKTQ3OB4692@S5KkcNmhFgBeCQ2-9wIBN@S5KkcOFpItiyAfmyy0Ilv@S5KkcFV5dizyvWn6V7JdA`
+'S5KkcRxwap1DfIBPynfVbcg@S5KkcOGRatCyXYGmj6LBs@S5KkcRB0Z9VbQcRP8wvcOJw@S5KkcRhga91XSIUiikvACJg@S5KkcRRlP8wDRKB_xwP9edw@S5KkcPkxMtC6eSHue56hV@S5KkcRBpMoVPUJxL8kvMNdg@S5KkcREwa9wXSJRPywqMJfQ@S5KkcRkof9QXVdR7zwaZYcg@S5KkcCVhHoi6RanmRw45R@S9_tzQhwf81DQJw@S5KkcRkwQ9lLUJh-mwfZYIQ@S5KkcMX5wsTafSkKP9rBz@S5KkcE319qyKTQ3OB4692@S5KkcNmhFgBeCQ2-9wIBN@S5KkcOFpItiyAfmyy0Ilv@S5KkcFV5dizyvWn6V7JdA'
+'S5KkcRxwap1DfIBPynfVbcg@S5KkcOGRatCyXYGmj6LBs@S5KkcRB0Z9VbQcRP8wvcOJw@S5KkcRhga91XSIUiikvACJg@S5KkcRRlP8wDRKB_xwP9edw@S5KkcPkxMtC6eSHue56hV@S5KkcRBpMoVPUJxL8kvMNdg@S5KkcREwa9wXSJRPywqMJfQ@S5KkcRkof9QXVdR7zwaZYcg@S5KkcCVhHoi6RanmRw45R@S9_tzQhwf81DQJw@S5KkcRkwQ9lLUJh-mwfZYIQ@S5KkcMX5wsTafSkKP9rBz@S5KkcE319qyKTQ3OB4692@S5KkcNmhFgBeCQ2-9wIBN@S5KkcOFpItiyAfmyy0Ilv@S5KkcFV5dizyvWn6V7JdA'
+
 ]
 let nowTimes = new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60 * 1000 + 8 * 60 * 60 * 1000);
 !(async () => {
   $.tuanList = [];
   $.authorTuanList = [];
   await requireConfig();
-  if (helpAuthor) await getAuthorShareCode('http://github.com/ZFeng3242/updateTeam/raw/master/shareCodes/jd_zz.json');
-  if (helpAuthor) await getAuthorShareCode('https://raw.githubusercontent.com/ZFeng3242/updateTeam/master/shareCodes/jd_zz.json');
+  if (helpAuthor) await getAuthorShareCode('https://github.com/ZFeng3242/updateTeam/raw/master/shareCodes/jd_zz.json');
   if (!cookiesArr[0]) {
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
     return;
@@ -79,7 +82,7 @@ let nowTimes = new Date(new Date().getTime() + new Date().getTimezoneOffset() * 
       await notify.sendNotify($.name, allMessage);
     }
   }
-  console.log(`\n\n开始账号内部互助 【赚京豆(微信小程序)-瓜分京豆】活动(优先内部账号互助(需内部cookie数量大于${$.assistNum || 4}个)，如有剩余助力次数则给维护者ZFeng3242助力)\n`)
+  console.log(`\n\n开始账号内部互助 【赚京豆(微信小程序)-瓜分京豆】活动(优先内部账号互助(需内部cookie数量大于${$.assistNum || 4}个)，如有剩余助力次数则给ZFeng3242助力)\n`)
   for (let i = 0; i < cookiesArr.length; i++) {
     $.canHelp = true
     if (cookiesArr[i]) {
@@ -94,9 +97,9 @@ let nowTimes = new Date(new Date().getTime() + new Date().getTimezoneOffset() * 
         }
       }
       if ($.canHelp) {
-        console.log(`开始账号内部互助 赚京豆-瓜分京豆 活动，如有剩余则给维护者ZFeng3242助力`)
+        console.log(`开始账号内部互助 赚京豆-瓜分京豆 活动，如有剩余则给ZFeng3242助力`)
         for (let j = 0; j < $.authorTuanList.length; ++j) {
-          console.log(`账号 ${$.UserName} 开始给维护者ZFeng3242 ${$.authorTuanList[j]['assistedPinEncrypted']}助力`)
+          console.log(`账号 ${$.UserName} 开始给ZFeng3242 ${$.authorTuanList[j]['assistedPinEncrypted']}助力`)
           await helpFriendTuan($.authorTuanList[j])
           if(!$.canHelp) break
         }
@@ -118,11 +121,12 @@ async function jdWish() {
   $.assistStatus = 0;
   await getTaskList(true)
   await getUserTuanInfo()
-  if (!$.tuan) {
+  if (!$.tuan && $.assistStatus === 3 && $.canStartNewAssist) {
+    console.log(`准备再次开团`)
     await openTuan()
     if ($.hasOpen) await getUserTuanInfo()
   }
-  if ($.tuan && $.assistStatus !== 3) $.tuanList.push($.tuan)
+  if ($.tuan && $.tuan.hasOwnProperty('assistedPinEncrypted') && $.assistStatus !== 3) $.tuanList.push($.tuan)
 
   await helpFriends()
   await getUserInfo()
@@ -186,7 +190,6 @@ function getAuthorShareCode(url) {
         if (err) {
         } else {
           $.authorTuanList = $.authorTuanList.concat(JSON.parse(data))
-          console.log(`作者助力码获取成功`)
         }
       } catch (e) {
         $.logErr(e, resp)
@@ -238,7 +241,14 @@ function getUserTuanInfo() {
           if (safeGet(data)) {
             data = JSON.parse(data);
             if (data['success']) {
-              $.log(`\n\n【赚京豆(微信小程序)-瓜分京豆】能否再次开团: ${data.data.canStartNewAssist ? '可以' : '否'}\n\n`)
+              $.log(`\n\n当前【赚京豆(微信小程序)-瓜分京豆】能否再次开团: ${data.data.canStartNewAssist ? '可以' : '否'}`)
+              if (data.data.assistStatus === 1 && !data.data.canStartNewAssist) {
+                console.log(`已开团(未达上限)，但团成员人未满\n\n`)
+              } else if (data.data.assistStatus === 3 && data.data.canStartNewAssist) {
+                console.log(`已开团(未达上限)，团成员人已满\n\n`)
+              } else if (data.data.assistStatus === 3 && !data.data.canStartNewAssist) {
+                console.log(`今日开团已达上限，且当前团成员人已满\n\n`)
+              }
               if (data.data && !data.data.canStartNewAssist) {
                 $.tuan = {
                   "activityIdEncrypted": data.data.id,
@@ -246,10 +256,11 @@ function getUserTuanInfo() {
                   "assistedPinEncrypted": data.data.encPin,
                   "channel": "FISSION_BEAN"
                 }
-                $.tuanActId = data.data.id;
-                $.assistStatus = data['data']['assistStatus'];
-                $.assistNum = data['data']['assistNum'] || 4;
               }
+              $.tuanActId = data.data.id;
+              $.assistNum = data['data']['assistNum'] || 4;
+              $.assistStatus = data['data']['assistStatus'];
+              $.canStartNewAssist = data['data']['canStartNewAssist'];
             } else {
               $.tuan = true;//活动火爆
               console.log(`获取【赚京豆(微信小程序)-瓜分京豆】活动信息失败 ${JSON.stringify(data)}\n`)

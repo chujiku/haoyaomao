@@ -2,55 +2,55 @@
 超级直播间红包雨
 下一场直播时间:04月14日  20:00，ID：3861625
 30,31 20-23/1 14 4 *
-下一场直播时间:04月13日  20:00，ID：3866703
-30,31 20-23/1 13 4 *
-下一场直播时间:04月09日  20:00，ID：3863492
 脚本兼容: Quantumult X, Surge, Loon, JSBox, Node.js
 ==============Quantumult X==============
 [task_local]
 #超级直播间红包雨
 0,30,31 20-23/1 * * * https://gitee.com/lxk0301/jd_scripts/raw/master/jd_live_redrain.js, tag=超级直播间红包雨, enabled=true
+
 ==============Loon==============
 [Script]
 cron "0,30,31 20-23/1 * * *" script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_live_redrain.js,tag=超级直播间红包雨
+
 ================Surge===============
 超级直播间红包雨 = type=cron,cronexp="0,30,31 20-23/1 * * *",wake-system=1,timeout=3600,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_live_redrain.js
+
 ===============小火箭==========
 超级直播间红包雨 = type=cron,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_live_redrain.js, cronexpr="0,30,31 20-23/1 * * *", timeout=3600, enable=true
 */
 const $ = new Env('超级直播间红包雨');
 let allMessage = '';
 let bodyList = {
-  "9": {
-    "url": "https://api.m.jd.com/client.action?functionId=liveActivityV946&uuid=8888888&client=apple&clientVersion=9.4.1&st=1617851039013&sign=75a906562a942575139e871715e5e95f&sv=122",
-    "body": "body=%7B%22liveId%22%3A%223863492%22%7D"
-  },
-  "13": {
-    "url": "https://api.m.jd.com/client.action?functionId=liveActivityV946&uuid=8888888&client=apple&clientVersion=9.4.1&st=1617851035011&sign=ce3542c09121b1474c0beba1413fec13&sv=112",
-    "body": "body=%7B%22liveId%22%3A%223866703%22%7D"
-  },
   "14": {
     "url": "https://api.m.jd.com/client.action?functionId=liveActivityV946&uuid=8888888&client=apple&clientVersion=9.4.1&st=1617851034027&sign=811dcdb1ef6f4e775f7ccf4f42d73a7a&sv=111",
     "body": "body=%7B%22liveId%22%3A%223861625%22%7D"
   }
 }
 let ids = {
-  '8': 'RRA4RhWMc159kA62qLbaEa88evE7owb',
-  '9': 'RRA4RhWMc159kA62qLbaEa88evE7owb',
-  '10': 'RRA4RhWMc159kA62qLbaEa88evE7owb',
-  '11': 'RRA4RhWMc159kA62qLbaEa88evE7owb',
-  '12': 'RRA4RhWMc159kA62qLbaEa88evE7owb',
-  '13': 'RRA4RhWMc159kA62qLbaEa88evE7owb',
-  '14': 'RRA4RhWMc159kA62qLbaEa88evE7owb',
-  '15': 'RRA4RhWMc159kA62qLbaEa88evE7owb',
-  '16': 'RRA4RhWMc159kA62qLbaEa88evE7owb',
-  '17': 'RRA4RhWMc159kA62qLbaEa88evE7owb',
-  '18': 'RRA4RhWMc159kA62qLbaEa88evE7owb',
-  '19': 'RRA4RhWMc159kA62qLbaEa88evE7owb',
-  '20': 'RRA4RhWMc159kA62qLbaEa88evE7owb',
-  '21': 'RRA4RhWMc159kA62qLbaEa88evE7owb',
-  '22': 'RRA4RhWMc159kA62qLbaEa88evE7owb',
-  '23': 'RRA4RhWMc159kA62qLbaEa88evE7owb'
+  '0': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN', 
+  '1': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN', 
+  '2': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN', 
+  '3': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN', 
+  '4': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN', 
+  '5': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN', 
+  '6': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN', 
+  '7': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN', 
+  '8': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN', 
+  '9': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN', 
+  '10': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN', 
+  '11': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN', 
+  '12': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN', 
+  '13': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN', 
+  '14': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN', 
+  '15': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN', 
+  '16': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN', 
+  '17': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN', 
+  '18': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN', 
+  '19': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN', 
+  '20': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN', 
+  '21': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN', 
+  '22': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN', 
+  '23': 'RRA2CnovS9KVTTwBD9NV7o4kc3P8PTN'
 }
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
@@ -74,10 +74,7 @@ const JD_API_HOST = 'https://api.m.jd.com/api';
     return;
   }
   console.log('下一场直播时间:04月14日  20:00，ID：3861625\n' +
-      '30,31 20-23/1 14 4 *\n' +
-      '下一场直播时间:04月13日  20:00，ID：3866703\n' +
-      '30,31 20-23/1 13 4 *\n' +
-      '下一场直播时间:04月09日  20:00，ID：3863492')
+      '30,31 20-23/1 14 4 *')
   await getRedRain();
 
   let nowTs = new Date().getTime()
