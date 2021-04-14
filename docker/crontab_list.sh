@@ -135,3 +135,5 @@
 #20 9 * * 6 node /scripts/jd_delCoupon.js >> /scripts/logs/jd_delCoupon.log 2>&1
 # 京东家庭号(暂不知最佳cron)
 # */20 * * * * node /scripts/jd_family.js >> /scripts/logs/jd_family.log 2>&1
+# jd_cash_exchange
+# 0,1,2 0 * * * node /scripts/jd_cash_exchange.js >> /scripts/logs/jd_cash_exchange.log 2>&1
