@@ -511,7 +511,7 @@ function taskurl(url) {
     }
   }
 }
-function updateShareCodesCDN(url = 'https://gitee.com/Soundantony/updateTeam/raw/master/shareCodes/jd_5g.json') {
+function updateShareCodesCDN(url = 'https://github.com/ZFeng3242/updateTeam/raw/master/shareCodes/jd_5g.json') {
   return new Promise(resolve => {
     $.get({
       url ,
