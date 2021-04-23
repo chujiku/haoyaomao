@@ -1,17 +1,29 @@
 /*
- * @Author: lxk0301 https://github.com/lxk0301 
+ * @Author: LXK9301 https://github.com/LXK9301
  * @Date: 2020-11-10 14:07:07 
- * @Last Modified by: lxk0301
+ * @Last Modified by: LXK9301
  * @Last Modified time: 2020-11-23 12:27:16
  */
 /*
-京东金融养猪猪
+活动入口：京东金融养猪猪
 一键开完所有的宝箱功能。耗时70秒
 大转盘抽奖
 喂食
 每日签到
 完成分享任务得猪粮
-12 * * * *
+已支持IOS双京东账号,Node.js支持N个京东账号
+脚本兼容: QuantumultX, Surge, Loon, 小火箭，JSBox, Node.js
+===============Quantumultx===============
+[task_local]
+#京东金融养猪猪
+12 * * * * https://gitee.com/lxk0301/jd_scripts/raw/master/jd_pigPet.js, tag=京东金融养猪猪, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdyz.png, enabled=true
+================Loon==============
+[Script]
+cron "12 * * * *" script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_pigPet.js, tag=京东金融养猪猪
+===============Surge=================
+京东金融养猪猪 = type=cron,cronexp="12 * * * *",wake-system=1,timeout=3600,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_pigPet.js
+============小火箭=========
+京东金融养猪猪 = type=cron,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_pigPet.js, cronexpr="12 * * * *", timeout=3600, enable=true
  */
 
 const $ = new Env('金融养猪');
@@ -27,13 +39,7 @@ if ($.isNode()) {
   })
   if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {};
 } else {
-  let cookiesData = $.getdata('CookiesJD') || "[]";
-  cookiesData = jsonParse(cookiesData);
-  cookiesArr = cookiesData.map(item => item.cookie);
-  cookiesArr.reverse();
-  cookiesArr.push(...[$.getdata('CookieJD2'), $.getdata('CookieJD')]);
-  cookiesArr.reverse();
-  cookiesArr = cookiesArr.filter(item => item !== "" && item !== null && item !== undefined);
+  cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
 !(async () => {
   if (!cookiesArr[0]) {
@@ -43,7 +49,7 @@ if ($.isNode()) {
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
-      $.UserName = decodeURIComponent(cookie.match(/pt_pin=(.+?);/) && cookie.match(/pt_pin=(.+?);/)[1])
+      $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
       $.index = i + 1;
       $.isLogin = true;
       $.nickName = '';
@@ -527,7 +533,7 @@ function queryMissionReceiveAfterStatus(missionId) {
         "Cookie": cookie,
         "Origin": "https://jdjoy.jd.com",
         "Referer": "https://jdjoy.jd.com/",
-        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0")
+        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1")
       }
     }
     $.get(options, (err, resp, data) => {
@@ -576,7 +582,7 @@ function finishReadMission(missionId) {
         "Cookie": cookie,
         "Origin": "https://jdjoy.jd.com",
         "Referer": "https://jdjoy.jd.com/",
-        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0")
+        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1")
       }
     }
     $.get(options, (err, resp, data) => {
@@ -622,7 +628,7 @@ function TotalBean() {
         "Connection": "keep-alive",
         "Cookie": cookie,
         "Referer": "https://wqs.jd.com/my/jingdou/my.shtml?sceneval=2",
-        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0")
+        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1")
       }
     }
     $.post(options, (err, resp, data) => {
@@ -638,7 +644,7 @@ function TotalBean() {
               return
             }
             if (data['retcode'] === 0) {
-              $.nickName = data['base'].nickname;
+              $.nickName = (data['base'] && data['base'].nickname) || $.UserName;
             } else {
               $.nickName = $.UserName
             }
