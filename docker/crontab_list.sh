@@ -30,7 +30,7 @@
 # jd_health
 30 0-23/5 * * * node /scripts/jd_health.js >> /scripts/logs/jd_health.log 2>&1
 # jd_super_redrain.js
-0 0,1-23/1 * * * node /scripts/jd_mohe.js >> /scripts/logs/jd_mohe.log 2>&1
+0 0,1-23/1 * * * node /scripts/jd_super_redrain.js >> /scripts/logs/jd_super_redrain.log 2>&1
 
 ##############长期活动##############
 # 签到
