@@ -11,24 +11,26 @@
 30 9 * * * node /scripts/jd_speed_redpocke.js >> /scripts/logs/jd_speed_redpocke.log 2>&1
 # 超级直播间红包雨
 0,30,31 20-23/1 * * * node /scripts/jd_liveredrain.js >> /scripts/logs/jd_liveredrain.log 2>&1
-#女装盲盒 活动时间：2021-04-1到2021-04-31
+# 女装盲盒 活动时间：2021-04-1到2021-04-31
 35 1,23 * * * node /scripts/jd_nzmh.js >> /scripts/logs/jd_nzmh.log 2>&1
-#京东国际盲盒活动时间】2021年02月23日 起至 2021年03月31日 18:00:00
+# 京东国际盲盒活动时间】2021年02月23日 起至 2021年03月31日 18:00:00
 5 7,12,23 * * * node /scripts/jd_global_mh.js >> /scripts/logs/jd_global_mh.log 2>&1
-#环球挑战赛 第二季(活动时间：2021-03-08 至 2021-03-31)
+# 环球挑战赛 第二季(活动时间：2021-03-08 至 2021-03-31)
 35 6,22 * * * node /scripts/jd_global.js >> /scripts/logs/jd_global.log 2>&1
-#手机尚学季
+# 手机尚学季
 0 0,14 * * * node /scripts/jd_xtg.js >> /scripts/logs/jd_xtg.log 2>&1
-#jd_jump_jump
+# jd_jump_jump
 10 20 * * * node /scripts/jd_jump_jump.js >> /scripts/logs/jd_jump_jump.log 2>&1
 #5G超级盲盒 活动时间：2021-03-19到2021-04-30
 0 0,1-23/4 * * * node /scripts/jd_mohe.js >> /scripts/logs/jd_mohe.log 2>&1
-#jd_xmf
+# jd_xmf
 10 10 25-27 3 * node /scripts/jd_xmf.js >> /scripts/logs/jd_xmf.log 2>&1
 #jd_shoplottery
 10 15 * * * node /scripts/jd_shoplottery.js >> /scripts/logs/jd_shoplottery.log 2>&1
-#jd_health
+# jd_health
 30 0-23/5 * * * node /scripts/jd_health.js >> /scripts/logs/jd_health.log 2>&1
+# jd_super_redrain.js
+0 0,1-23/1 * * * node /scripts/jd_mohe.js >> /scripts/logs/jd_mohe.log 2>&1
 
 ##############长期活动##############
 # 签到
