@@ -1,6 +1,6 @@
 {
  "name": "ZFeng3242 task gallery",
- "description": "https://github.com/ZFeng3242/JD-haoyangmao/tree/main",
+ "description": "https://gitee.com/ZFeng3242/JD-haoyangmao/tree/main",
  "task": [
     "2 9 * * * https://gitee.com/ZFeng3242/JD-haoyangmao/raw/main/jd_bean_change.js, tag=京东资产变动通知, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true",
     "10 7 * * * https://gitee.com/ZFeng3242/JD-haoyangmao/raw/main/jd_bean_home.js, tag=领京豆额外奖励, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_bean_home.png, enabled=true",
