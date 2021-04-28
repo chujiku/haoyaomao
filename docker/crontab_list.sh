@@ -27,8 +27,6 @@
 10 10 25-27 3 * node /scripts/jd_xmf.js >> /scripts/logs/jd_xmf.log 2>&1
 #jd_shoplottery
 10 15 * * * node /scripts/jd_shoplottery.js >> /scripts/logs/jd_shoplottery.log 2>&1
-# jd_health
-30 0-23/5 * * * node /scripts/jd_health.js >> /scripts/logs/jd_health.log 2>&1
 # jd_super_redrain
 0 0,1-23/1 * * * node /scripts/jd_super_redrain.js >> /scripts/logs/jd_super_redrain.log 2>&1
 # jd_half_redrain
@@ -132,6 +130,14 @@
 0 1,17 * * *   node /scripts/jd_shake.js >> /scripts/logs/jd_shake.log 2>&1
 # 店铺签到
 0 1,17 * * *   node /scripts/jd_ShopSign.js >> /scripts/logs/jd_ShopSign.log 2>&1
+# 京东健康
+30 0-23/5 * * * node /scripts/jd_health.js >> /scripts/logs/jd_health.log 2>&1
+#京东健康社区收集健康能量
+5-45/20 * * * * node /scripts/jd_health_collect.js >> /scripts/logs/jd_health_collect.log 2>&1
+# 幸运大转盘
+10 10,23 * * * node /scripts/jd_market_lottery.js >> /scripts/logs/jd_market_lottery.log 2>&1
+# 领金贴
+5 0 * * * node /scripts/jd_jin_tie.js >> /scripts/logs/jd_jin_tie.log 2>&1
 
 ##############默认注释活动##############
 # 京东试用（默认注释，请配合取关脚本使用）
