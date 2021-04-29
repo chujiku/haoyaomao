@@ -170,7 +170,7 @@ jobs:
           env
 
       - name: "压缩文件夹"
-        run:zip -r myfile.zip ./*
+        run: zip -r myfile.zip ./*
         
       - name: "部署到腾讯云函数"
         run: node tencentscf.js
@@ -184,3 +184,4 @@ jobs:
         
       - name: "部署失败通知"
         run: node action.js
+
