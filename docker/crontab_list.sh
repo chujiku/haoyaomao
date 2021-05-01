@@ -3,10 +3,6 @@
 
 ##############短期活动##############
 
-# 小魔方
-10 8,21 1-8/1 3 * node /scripts/jd_xmf.js >> /scripts/logs/jd_xmf.log 2>&1
-# 京小兑
-30 9,15 * * * node /scripts/jd_jxd.js >> /scripts/logs/jd_jxd.log 2>&1
 # 极速版春香节红包
 30 9 * * * node /scripts/jd_speed_redpocke.js >> /scripts/logs/jd_speed_redpocke.log 2>&1
 # 超级直播间红包雨
@@ -23,8 +19,6 @@
 10 20 * * * node /scripts/jd_jump_jump.js >> /scripts/logs/jd_jump_jump.log 2>&1
 #5G超级盲盒 活动时间：2021-03-19到2021-04-30
 0 0,1-23/4 * * * node /scripts/jd_mohe.js >> /scripts/logs/jd_mohe.log 2>&1
-# jd_xmf
-10 10 25-27 3 * node /scripts/jd_xmf.js >> /scripts/logs/jd_xmf.log 2>&1
 #jd_shoplottery
 10 15 * * * node /scripts/jd_shoplottery.js >> /scripts/logs/jd_shoplottery.log 2>&1
 # jd_super_redrain
