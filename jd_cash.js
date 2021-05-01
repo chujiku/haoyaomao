@@ -65,9 +65,6 @@ let allMessage = '';
         }
         continue
       }
-      if(helpAuthor){
-        await shuye72()
-      }
       await jdCash()
     }
   }
