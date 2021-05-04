@@ -13,12 +13,8 @@
 5 7,12,23 * * * node /scripts/jd_global_mh.js >> /scripts/logs/jd_global_mh.log 2>&1
 # 环球挑战赛 第三季(活动时间：2021-04-28 至 2021-05-28)
 35 6,22 * * * node /scripts/jd_global.js >> /scripts/logs/jd_global.log 2>&1
-# 手机尚学季
-0 0,14 * * * node /scripts/jd_xtg.js >> /scripts/logs/jd_xtg.log 2>&1
 # jd_jump_jump
 10 20 * * * node /scripts/jd_jump_jump.js >> /scripts/logs/jd_jump_jump.log 2>&1
-#5G超级盲盒 活动时间：2021-03-19到2021-04-30
-0 0,1-23/4 * * * node /scripts/jd_mohe.js >> /scripts/logs/jd_mohe.log 2>&1
 #jd_shoplottery
 10 15 * * * node /scripts/jd_shoplottery.js >> /scripts/logs/jd_shoplottery.log 2>&1
 # jd_super_redrain
