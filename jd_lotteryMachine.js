@@ -18,10 +18,9 @@ if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () =
 //if (JSON.stringify(process.env).indexOf('GITHUB') > -1) process.exit(0);
 // $.appId = "1EFRQwA";
 // $.appId = "1EFRYwA";
-const appIdArr = ['1EFRRxA', '1EFRQwA', '1EFRTyg', '1EFRXxg', '1EFRZwA', '1EFRZwQ', '1EFRYwA', '1EFRYxw']
-const shareCodeArr = ["T0225KkcRxwap1DfIBPynfVbcgCjVQmoaT5kRrbA","T0205KkcOGRatCyXYGmj6LBsCjVQmoaT5kRrbA","T0225KkcRB0Z9VbQcRP8wvcOJwCjVQmoaT5kRrbA","T0205KkcJEJvrAG1WXicw5J-CjVQmoaT5kRrbA","T0225KkcRhga91XSIUiikvACJgCjVQmoaT5kRrbA","T0225KkcRRlP8wDRKB_xwP9edwCjVQmoaT5kRrbA","T0205KkcPkxMtC6eSHue56hVCjVQmoaT5kRrbA","T0225KkcRBpMoVPUJxL8kvMNdgCjVQmoaT5kRrbA","T0225KkcREwa9wXSJRPywqMJfQCjVQmoaT5kRrbA","T0225KkcRkof9QXVdR7zwaZYcgCjVQmoaT5kRrbA","T0205KkcCVhHoi6RanmRw45RCjVQmoaT5kRrbA","T0149_tzQhwf81DQJwCjVQmoaT5kRrbA","T0225KkcRkwQ9lLUJh-mwfZYIQCjVQmoaT5kRrbA","T0205KkcMX5wsTafSkKP9rBzCjVQmoaT5kRrbA","T0205KkcE319qyKTQ3OB4692CjVQmoaT5kRrbA","T0205KkcNmhFgBeCQ2-9wIBNCjVQmoaT5kRrbA","T0205KkcOFpItiyAfmyy0IlvCjVQmoaT5kRrbA","T0205KkcFV5dizyvWn6V7JdACjVQmoaT5kRrbA"]
-const homeDataFunPrefixArr = ['interact_template', 'interact_template', '', '', '', '', '', '', '', '', '', '', '', '', '', 'interact_template', 'interact_template', '']
-const collectScoreFunPrefixArr = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'interact_template', 'interact_template', '']
+const appIdArr = ['1EFRRxA','1EFRQwA','1EFRTyg','1EFRXxg','1EFVRww','1EFRYxA','1EFRZwA','1EFRZwQ','1EFRYwA']
+const homeDataFunPrefixArr = ['interact_template','interact_template','','','','','','','','','','','','','','','','interact_template','interact_template']
+const collectScoreFunPrefixArr = ['','','','','','','','','','','','','','','','','','interact_template','interact_template']
 $.allShareId = {};
 main();
 async function main() {
