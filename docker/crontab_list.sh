@@ -25,6 +25,8 @@
 13 1,22,23 * * * node /scripts/jd_daily_lottery.js >> /scripts/logs/jd_daily_lottery.log 2>&1
 #jd_beauty
 1 7,12,19 * * * node /scripts/jd_beauty.js >> /scripts/logs/jd_beauty.log 2>&1
+#jd_star
+15 8 9-13 5 * node /scripts/jd_star.js >> /scripts/logs/jd_star.log 2>&1
 
 ##############长期活动##############
 # 签到
