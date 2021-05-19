@@ -252,8 +252,9 @@ function pigPetLogin() {
                   return
                 }
                 if (data.resultData.resultData.wished) {
-                  allMessage += `京东账号${$.index} ${$.nickName || $.UserName}\n${data.resultData.resultData.wishAward.name}已可兑换${$.index !== cookiesArr.length ? '\n\n' : ''}`
-                }
+                    if (data.resultData.resultData.wishAward) {
+                    allMessage += `京东账号${$.index} ${$.nickName || $.UserName}\n${data.resultData.resultData.wishAward.name}已可兑换${$.index !== cookiesArr.length ? '\n\n' : ''}`
+                  }                }
               } else {
                 console.log(`Login其他情况：${JSON.stringify(data)}`)
               }
