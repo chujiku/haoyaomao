@@ -75,11 +75,13 @@ const JD_API_HOST = 'https://api.m.jd.com/';
         await help(code[0], code[1])
       }
       if (helpAuthor && $.authorCode) {
-        console.log(`去帮助作者`)
-        const helpRes = await help(code.shareCode, code.groupCode)
-        if (helpRes && helpRes.data.respCode === 'SG209') {
-          console.log(`助力次数已耗尽，跳出助力`)
-          break;
+        console.log(`去帮助维护者`)
+        for (let code of $.authorCode) {
+          const helpRes = await help(code.shareCode, code.groupCode);
+          if (helpRes && helpRes.data.respCode === 'SG209') {
+            console.log(`助力次数已耗尽，跳出助力`)
+            break;
+          }
         }
       }
       if (helpAuthor && $.authorCode2) {

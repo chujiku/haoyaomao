@@ -1,7 +1,7 @@
 /*
 女装盲盒
-活动时间：2021-3-22至2021-3-31
-活动地址：https://anmp.jd.com/babelDiy/Zeus/3gpAsWd6UBb1MWvr6PFYjNS4Nexk/index.html
+活动时间：2021-5-1至2021-5-31
+活动地址：https://h5.m.jd.com/babelDiy/Zeus/3eeruLXVbXge6CexVq8XkBbBvAfy/index.html
 活动入口：京东app-女装馆-赢京豆
 已支持IOS双京东账号,Node.js支持N个京东账号
 脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
@@ -64,7 +64,8 @@ if ($.isNode()) {
         continue
       }
       try {
-        await jdMh('https://anmp.jd.com/babelDiy/Zeus/2x3yeXUmPbFVCAoXKQqSrdrQuoBk/index.html')
+        await jdMh('https://h5.m.jd.com/babelDiy/Zeus/3eeruLXVbXge6CexVq8XkBbBvAfy/index.html')
+        // await jdMh('https://anmp.jd.com/babelDiy/Zeus/2x3yeXUmPbFVCAoXKQqSrdrQuoBk/index.html')
         // await jdMh('https://anmp.jd.com/babelDiy/Zeus/gY7ymUmC8ZM74Zw3woiDDQU1naT/index.html?wxAppName=jd')
         // await jdMh('https://anmp.jd.com/babelDiy/Zeus/3UGPT8RMBu4kL2YAYN98MgkcDhRq/index.html?wxAppName=jd')
         // await jdMh('https://anmp.jd.com/babelDiy/Zeus/yiNQjMxQvs3R3SdS4nwa2MFk1FE/index.html?wxAppName=jd')
@@ -212,8 +213,7 @@ function taskUrl(function_id, body = '') {
       'Accept-Language': 'zh-cn',
       'Content-Type': 'application/json;charset=utf-8',
       'Origin': 'wq.jd.com',
-      'User-Agent': 'JD4iPhone/167490 (iPhone; iOS 14.2; Scale/3.00)',
-      'Referer': `https://anmp.jd.com/babelDiy/Zeus/xKACpgVjVJM7zPKbd5AGCij5yV9/index.html?wxAppName=jd`,
+"User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),      'Referer': `https://anmp.jd.com/babelDiy/Zeus/xKACpgVjVJM7zPKbd5AGCij5yV9/index.html?wxAppName=jd`,
       'Cookie': cookie
     }
   }
