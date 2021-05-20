@@ -78,7 +78,7 @@ const JD_API_HOST = 'https://api.m.jd.com/';
         await help(code[0], code[1]);
       }
       if (helpAuthor && $.authorCode) {
-        console.log(`\n【抢京豆】${$.UserName}去帮助维护者`)
+        console.log(`\n【抢京豆】${$.UserName} 去帮助ZFeng3242`)
         for (let code of $.authorCode) {
           const helpRes = await help(code.shareCode, code.groupCode);
           if (helpRes && helpRes.data.respCode === 'SG209') {
