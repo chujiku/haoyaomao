@@ -13,8 +13,6 @@
 5 7,12,23 * * * node /scripts/jd_global_mh.js >> /scripts/logs/jd_global_mh.log 2>&1
 # 环球挑战赛 第三季(活动时间：2021-04-28 至 2021-05-28)
 35 6,22 * * * node /scripts/jd_global.js >> /scripts/logs/jd_global.log 2>&1
-# jd_jump_jump
-10 20 * * * node /scripts/jd_jump_jump.js >> /scripts/logs/jd_jump_jump.log 2>&1
 #jd_shoplottery
 10 15 * * * node /scripts/jd_shoplottery.js >> /scripts/logs/jd_shoplottery.log 2>&1
 # jd_super_redrain
