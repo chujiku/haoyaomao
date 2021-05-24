@@ -268,8 +268,8 @@ function readShareCode() {
     })
     await $.wait(10000);
     resolve()
-  })
-}
+  }
+
 //格式化助力码
 function shareCodesFormat() {
   return new Promise(async resolve => {
