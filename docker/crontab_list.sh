@@ -25,6 +25,10 @@
 1 7,12,19 * * * node /scripts/jd_beauty.js >> /scripts/logs/jd_beauty.log 2>&1
 #jd_pk
 15 8,13,18 17-31 5 * node /scripts/jd_pk.js >> /scripts/logs/jd_pk.log 2>&1
+#城城领现金
+33 * * * * node /scripts/jd_city.js >> /scripts/logs/jd_city.log 2>&1
+#手机狂欢城
+0 0,12,18,21 * * * node /scripts/jd_carnivalcity.js >> /scripts/logs/jd_carnivalcity.log 2>&1
 
 ##############长期活动##############
 # 签到
