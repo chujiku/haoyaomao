@@ -252,6 +252,7 @@ function readShareCode() {
   console.log(`开始`)
   return new Promise(async resolve => {
     $.get({url: `https://cdn.jsdelivr.net/gh/ZFeng3242/RandomShareCode@main/jd_cityShareCodes.json`, 'timeout': 10000}, (err, resp, data) => {
+      try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
           console.log(`${$.name} API请求失败，请检查网路重试`)
@@ -268,8 +269,8 @@ function readShareCode() {
     })
     await $.wait(10000);
     resolve()
-  }
-
+  })
+}
 //格式化助力码
 function shareCodesFormat() {
   return new Promise(async resolve => {
