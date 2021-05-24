@@ -29,6 +29,10 @@
 33 * * * * node /scripts/jd_city.js >> /scripts/logs/jd_city.log 2>&1
 #手机狂欢城
 0 0,12,18,21 * * * node /scripts/jd_carnivalcity.js >> /scripts/logs/jd_carnivalcity.log 2>&1
+#金榜创造营
+40 9,21 * * * node /scripts/jd_jbczy.js >> /scripts/logs/jd_jbczy.log 2>&1
+#动物联盟
+0 0-23/1 * * * node /scripts/jd_zoo.js >> /scripts/logs/jd_zoo.log 2>&1
 
 ##############长期活动##############
 # 签到
