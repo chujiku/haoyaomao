@@ -243,7 +243,7 @@ function city_lotteryAward() {
 function readShareCode() {
   console.log(`开始`)
   return new Promise(async resolve => {
-    $.get({url: `https://cdn.jsdelivr.net/gh/ZFeng3242/updateTeam@master/shareCodes/jd_cityShareCodes.json`, 'timeout': 10000}, (err, resp, data) => {
+    $.get({url: `https://cdn.jsdelivr.net/gh/ZFeng3242/RandomShareCode@main/jd_cityShareCodes.json`, 'timeout': 10000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
