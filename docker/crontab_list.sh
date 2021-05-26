@@ -32,7 +32,7 @@
 #金榜创造营
 40 9,21 * * * node /scripts/jd_jbczy.js >> /scripts/logs/jd_jbczy.log 2>&1
 #618动物联萌
-13 0-23/2 * * * node /scripts/jd_zoo.js >> /scripts/logs/jd_zoo.log 2>&1
+13 * * * * node /scripts/jd_zoo.js >> /scripts/logs/jd_zoo.log 2>&1
 
 ##############长期活动##############
 # 签到
