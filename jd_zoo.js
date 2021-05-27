@@ -38,7 +38,7 @@ $.innerPkInviteList = [
   'sSKNX-MpqKOJsNu_m5iLABwjHESM4ggMoWnE4jQolb-gghsoSHxSyMzO2Sgw8ew',
   'sSKNX-MpqKOJsNvA49iYfF0vk-VP4OATmHFwc7stga4jeQDzXm3VORjKXNvu',
   'sSKNX-MpqKOJsNu8nc6NA88mD03SR4re2f2oEOwXhwKldIQk7jmmFODK2ROPUVI',
-  'sSKNX-MpqKMHbAlvNg4AtbPk2pygMqWs0IwxO5kKoWMYVodHVTh2'
+  'sSKNX-MpqKMHbAlvNg4AtbPk2pygMqWs0IwxO5kKoWMYVodHVTh5'
 ];
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
