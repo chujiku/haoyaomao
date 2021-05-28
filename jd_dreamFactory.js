@@ -1,28 +1,23 @@
 /*
 京东京喜工厂
-更新时间：2021-3-25 修复做任务、收集电力出现火爆，不能完成任务
-重新计算h5st验证
+更新时间：2021-4-21
+修复做任务、收集电力出现火爆，不能完成任务，重新计算h5st验证
 参考自 ：https://www.orzlee.com/web-development/2021/03/03/lxk0301-jingdong-signin-scriptjingxi-factory-solves-the-problem-of-unable-to-signin.html
 活动入口：京东APP-游戏与互动-查看更多-京喜工厂
 或者: 京东APP首页搜索 "玩一玩" ,造物工厂即可
-
 已支持IOS双京东账号,Node.js支持N个京东账号
 脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
 ============Quantumultx===============
 [task_local]
 #京喜工厂
 10 * * * * https://gitee.com/lxk0301/jd_scripts/raw/master/jd_dreamFactory.js, tag=京喜工厂, img-url=https://github.com/58xinian/icon/raw/master/jdgc.png, enabled=true
-
 ================Loon==============
 [Script]
 cron "10 * * * *" script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_dreamFactory.js,tag=京喜工厂
-
 ===============Surge=================
 京喜工厂 = type=cron,cronexp="10 * * * *",wake-system=1,timeout=3600,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_dreamFactory.js
-
 ============小火箭=========
 京喜工厂 = type=cron,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_dreamFactory.js, cronexpr="10 * * * *", timeout=3600, enable=true
-
  */
 // prettier-ignore
 !function (t, r) { "object" == typeof exports ? module.exports = exports = r() : "function" == typeof define && define.amd ? define([], r) : t.CryptoJS = r() }(this, function () {
@@ -38,7 +33,7 @@ const JD_API_HOST = 'https://m.jingxi.com';
 const notify = $.isNode() ? require('./sendNotify') : '';
 let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭通知推送
 const randomCount = $.isNode() ? 20 : 5;
-let tuanActiveId = `XBYi-5lVdNspWhlNwhpE6Q==`;
+let tuanActiveId = ``;
 const jxOpenUrl = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%20%22des%22:%20%22m%22,%20%22url%22:%20%22https://wqsd.jd.com/pingou/dream_factory/index.html%22%20%7D`;
 let cookiesArr = [], cookie = '', message = '', allMessage = '';
 const inviteCodes = [
@@ -47,7 +42,6 @@ const inviteCodes = [
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 $.tuanIds = [];
 $.appId = 10001;
-
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
     cookiesArr.push(jdCookieNode[item])
@@ -77,7 +71,8 @@ if ($.isNode()) {
       $.pickEle = 0;
       $.pickFriendEle = 0;
       $.friendList = [];
-      $.canHelpFlag = true;//能否助力朋友
+      $.canHelpFlag = true;//能否助力朋友(招工)
+      $.tuanNum = 0;//成团人数
       await TotalBean();
       console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
       if (!$.isLogin) {
@@ -95,18 +90,23 @@ if ($.isNode()) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
       $.isLogin = true;
+      $.canHelp = true;//能否参团
       await TotalBean();
       if (!$.isLogin) {
         continue
       }
-      console.log(`\n参加作者的团\n`);
-      await joinLeaderTuan();//参团
       $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
-      if (cookiesArr && cookiesArr.length < 2) return      console.log(`\n账号内部相互进团\n`);
-      for (let item of $.tuanIds) {
-        console.log(`${$.UserName} 去参加团 ${item}\n`);
-        await JoinTuan(item);
+      
+      if ((cookiesArr && cookiesArr.length >= ($.tuanNum || 5)) && $.canHelp) {
+        console.log(`\n账号${$.UserName} 内部相互进团\n`);
+        for (let item of $.tuanIds) {
+          console.log(`\n${$.UserName} 去参加团 ${item}`);
+          if (!$.canHelp) break;
+          await JoinTuan(item);
+          await $.wait(1000);
+        }
       }
+      if ($.canHelp) await joinLeaderTuan();//参团
     }
   }
   if ($.isNode() && allMessage) {
@@ -292,6 +292,9 @@ function getUserElectricity() {
             data = JSON.parse(data);
             if (data['ret'] === 0) {
               console.log(`发电机：当前 ${data.data.currentElectricityQuantity} 电力，最大值 ${data.data.maxElectricityQuantity} 电力`)
+              if (data.data.currentElectricityQuantity < data.data.maxElectricityQuantity) {
+                $.log(`\n本次发电机电力集满分享后${data.data.nextCollectDoubleFlag === 1 ? '可' : '不可'}获得双倍电力，${data.data.nextCollectDoubleFlag === 1 ? '故目前不收取电力' : '故现在收取电力'}\n`)
+              }
               if (data.data.nextCollectDoubleFlag === 1) {
                 if (data.data.currentElectricityQuantity === data.data.maxElectricityQuantity && data.data.doubleElectricityFlag) {
                   console.log(`发电机：电力可翻倍并收获`)
@@ -592,8 +595,17 @@ function userInfo() {
                 message += `【当前等级】${data.user.userIdentity} ${data.user.currentLevel}\n`;
                 message += `【生产进度】${((production.investedElectric / production.needElectric) * 100).toFixed(2)}%\n`;
                 if (production.investedElectric >= production.needElectric) {
-                  $.log(`可以对方商品了`)
+                  if (production['exchangeStatus'] === 1) $.log(`\n\n可以兑换商品了`)
+                  if (production['exchangeStatus'] === 3) {
+                    $.log(`\n\n商品兑换已超时`)
+                    if (new Date().getHours() === 9) {
+                      $.msg($.name, '', `【京东账号${$.index}】${$.nickName}\n【生产商品】${$.productName}兑换已超时，请选择新商品进行制造`)
+                      allMessage += `【京东账号${$.index}】${$.nickName}\n【生产商品】${$.productName}兑换已超时，请选择新商品进行制造${$.index !== cookiesArr.length ? '\n\n' : ''}`;
+                    }
+                  }
                   // await exchangeProNotify()
+                } else {
+                  console.log(`\n\n预计最快还需 【${((production.needElectric - production.investedElectric) / (2 * 60 * 60 * 24)).toFixed(2)}天】生产完毕\n\n`)
                 }
               } else {
                 $.unActive = false;//标记是否开启了京喜活动或者选购了商品进行生产
@@ -604,7 +616,7 @@ function userInfo() {
                   console.log(`【提示】京东账号${$.index}[${$.nickName}]京喜工厂未选购商品\n请手动去京东APP->游戏与互动->查看更多->京喜工厂 选购\n`)
                   let nowTimes = new Date(new Date().getTime() + new Date().getTimezoneOffset()*60*1000 + 8*60*60*1000);
                   if (nowTimes.getHours()  === 12) {
-                    //如按每小时运行一次，则此处将一天推送2次提醒
+                    //如按每小时运行一次，则此处将一天12点推送1次提醒
                     $.msg($.name, '提醒⏰', `京东账号${$.index}[${$.nickName}]京喜工厂未选择商品\n请手动去京东APP->游戏与互动->查看更多->京喜工厂 选择商品`);
                     // if ($.isNode()) await notify.sendNotify(`${$.name} - 京东账号${$.index} - ${$.nickName}`, `京东账号${$.index}[${$.nickName}]京喜工厂未选择商品\n请手动去京东APP->游戏与互动->查看更多->京喜工厂 选择商品`)
                     if ($.isNode()) allMessage += `京东账号${$.index}[${$.nickName}]京喜工厂未选择商品\n请手动去京东APP->游戏与互动->查看更多->京喜工厂 选择商品${$.index !== cookiesArr.length ? '\n\n' : ''}`
@@ -694,7 +706,7 @@ function DrawProductionStagePrize() {
           console.log(`${JSON.stringify(err)}`)
           console.log(`${$.name} API请求失败，请检查网路重试`)
         } else {
-          console.log(`领取红包功能(测试中)：${data}`);
+          console.log(`开幸运红包：${data}`);
           // if (safeGet(data)) {
           //   data = JSON.parse(data);
           //   if (data['ret'] === 0) {
@@ -719,9 +731,9 @@ async function PickUp(encryptPin = $.encryptPin, help = false) {
     const { componentList } = GetUserComponentRes['data'];
     if (componentList && componentList.length <= 0) {
       if (help) {
-        $.log(`好友【${encryptPin}】地下暂无零件可收`)
+        $.log(`好友【${encryptPin}】地下暂无零件可收\n`)
       } else {
-        $.log(`自家地下暂无零件可收`)
+        $.log(`自家地下暂无零件可收\n`)
       }
       $.pickUpMyselfComponent = false;
     }
@@ -740,9 +752,9 @@ async function PickUp(encryptPin = $.encryptPin, help = false) {
           }
         } else {
           if (help) {
-            console.log(`收好友[${encryptPin}]零件失败：${PickUpComponentRes.msg},直接跳出`)
+            console.log(`收好友[${encryptPin}]零件失败：${PickUpComponentRes.msg},直接跳出\n`)
           } else {
-            console.log(`收自己地下零件失败：${PickUpComponentRes.msg},直接跳出`);
+            console.log(`收自己地下零件失败：${PickUpComponentRes.msg},直接跳出\n`);
             $.pickUpMyselfComponent = false;
           }
           break
@@ -822,14 +834,14 @@ async function stealFriend() {
   //   $.log(`今日收取零件已达上限，偷好友零件也达到上限，故跳出`)
   //   return
   // }
+  //调整，只在每日1点，12点，19点尝试收取好友零件
+  if (new Date().getHours() !== 1 && new Date().getHours() !== 12 && new Date().getHours() !== 19) return
   await getFriendList();
-  $.friendList = [...new Set($.friendList)];
+  $.friendList = [...new Set($.friendList)].filter(vo => !!vo && vo['newFlag'] !== 1);
+  console.log(`查询好友列表完成，共${$.friendList.length}好友，下面开始拾取好友地下的零件\n`);
   for (let i = 0; i < $.friendList.length; i++) {
-    let pin = $.friendList[i];//好友的encryptPin
-    if (pin === 'V5LkjP4WRyjeCKR9VRwcRX0bBuTz7MEK0-E99EJ7u0k=' || pin === 'Bo-jnVs_m9uBvbRzraXcSA==') {
-      continue
-    }
-    console.log(`开始收取第 ${i + 1} 个好友 ${pin} 地下零件`)
+    let pin = $.friendList[i]['encryptPin'];//好友的encryptPin
+    console.log(`\n开始收取第 ${i + 1} 个好友 【${$.friendList[i]['nickName']}】 地下零件 collectFlag：${$.friendList[i]['collectFlag']}`)
     await PickUp(pin, true);
     // await getFactoryIdByPin(pin);//获取好友工厂ID
     // if ($.stealFactoryId) await collectElectricity($.stealFactoryId,true, pin);
@@ -848,15 +860,15 @@ function getFriendList(sort = 0) {
             if (data['ret'] === 0) {
               data = data['data'];
               if (data.list && data.list.length <= 0) {
-                console.log(`查询好友列表完成，共${$.friendList.length}好友，下面开始拾取好友地下的零件\n`);
+                // console.log(`查询好友列表完成，共${$.friendList.length}好友，下面开始拾取好友地下的零件\n`);
                 return
               }
               let friendsEncryptPins = [];
               for (let item of data.list) {
-                friendsEncryptPins.push(item.encryptPin);
+                friendsEncryptPins.push(item);
               }
               $.friendList = [...$.friendList, ...friendsEncryptPins];
-              if (!$.isNode()) return
+              // if (!$.isNode()) return
               await getFriendList(data.sort);
             } else {
               console.log(`QueryFactoryManagerList异常：${JSON.stringify(data)}`)
@@ -922,6 +934,7 @@ async function tuanActivity() {
         }
         for (let item of tuanInfo) {
           const { realTuanNum, tuanNum, userInfo } = item;
+          $.tuanNum = tuanNum || 0;
           $.log(`\n开团情况:${realTuanNum}/${tuanNum}\n`);
           if (realTuanNum === tuanNum) {
             for (let user of userInfo) {
@@ -945,12 +958,16 @@ async function tuanActivity() {
   }
 }
 async function joinLeaderTuan() {
-  $.tuanIdS = null;
-  if (!$.tuanIdS) await updateTuanIdsCDN('https://github.com/ZFeng3242/updateTeam/raw/master/shareCodes/jd_updateFactoryTuanId.json');
-  if ($.tuanIdS && $.tuanIdS.tuanIds) {
-    for (let tuanId of $.tuanIdS.tuanIds) {
+  let res = await updateTuanIdsCDN(), res2 = await updateTuanIdsCDN("https://cdn.jsdelivr.net/gh/ZFeng3242/updateTeam@master/shareCodes/jd_updateFactoryTuanId.json")
+  if (!res) res = await updateTuanIdsCDN('https://cdn.jsdelivr.net/gh/ZFeng3242/updateTeam@master/shareCodes/jd_updateFactoryTuanId.json');
+  $.authorTuanIds = [...(res && res.tuanIds || []),...(res2 && res2.tuanIds || [])]
+  if ($.authorTuanIds && $.authorTuanIds.length) {
+    for (let tuanId of $.authorTuanIds) {
       if (!tuanId) continue
+      if (!$.canHelp) break;
+      console.log(`\n账号${$.UserName} 参加ZFeng3242的团 【${tuanId}】`);
       await JoinTuan(tuanId);
+      await $.wait(1000);
     }
   }
 }
@@ -1029,6 +1046,12 @@ function CreateTuan() {
               console.log(`开团成功tuanId为\n${data.data['tuanId']}`);
               $.tuanIds.push(data.data['tuanId']);
             } else {
+              //{"msg":"活动已结束，请稍后再试~","nowTime":1621551005,"ret":10218}
+              if (data['res'] === 10218 && $.index === 1) {
+                //只发送一次
+                $.msg($.name, '', `京喜工厂拼团瓜分电力活动团ID（activeId）已失效\n请自行抓包替换(Node环境变量为TUAN_ACTIVEID，iOS端在BoxJx)或者联系作者等待更新`);
+                if ($.isNode()) await notify.sendNotify($.name, `京喜工厂拼团瓜分电力活动团ID（activeId）已失效\n请自行抓包替换(Node环境变量为TUAN_ACTIVEID，iOS端在BoxJx)或者联系作者等待更新`)
+              }
               console.log(`开团异常：${JSON.stringify(data)}`);
             }
           }
@@ -1055,9 +1078,13 @@ function JoinTuan(tuanId, stk = '_time,activeId,tuanId') {
           if (safeGet(data)) {
             data = JSON.parse(data);
             if (data['ret'] === 0) {
-              console.log(`参团成功\n${JSON.stringify(data)}\n`);
+              console.log(`参团成功：${JSON.stringify(data)}\n`);
+            } else if (data['ret'] === 10005 || data['ret'] === 10206) {
+              //火爆，或者今日参团机会已耗尽
+              console.log(`参团失败：${JSON.stringify(data)}\n`);
+              $.canHelp = false;
             } else {
-              console.log(`参团失败：${JSON.stringify(data)}`);
+              console.log(`参团失败：${JSON.stringify(data)}\n`);
             }
           }
         }
@@ -1161,27 +1188,41 @@ function tuanAward(activeId, tuanId, isTuanLeader = true) {
   })
 }
 
-function updateTuanIdsCDN(url) {
+function updateTuanIdsCDN(url = 'https://raw.githubusercontent.com/ZFeng3242/updateTeam/master/shareCodes/jd_updateFactoryTuanId.json') {
   return new Promise(async resolve => {
-    $.get({url,
-      headers:{
+    const options = {
+      url: `${url}?${new Date()}`, "timeout": 10000, headers: {
         "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
-      }}, (err, resp, data) => {
+      }
+    };
+    if ($.isNode() && process.env.TG_PROXY_HOST && process.env.TG_PROXY_PORT) {
+      const tunnel = require("tunnel");
+      const agent = {
+        https: tunnel.httpsOverHttp({
+          proxy: {
+            host: process.env.TG_PROXY_HOST,
+            port: process.env.TG_PROXY_PORT * 1
+          }
+        })
+      }
+      Object.assign(options, { agent })
+    }
+    $.get(options, (err, resp, data) => {
       try {
         if (err) {
-          console.log(`${JSON.stringify(err)}`)
+          // console.log(`${JSON.stringify(err)}`)
         } else {
           if (safeGet(data)) {
-            $.tuanIdS = JSON.parse(data);
+            $.tuanConfigs = data = JSON.parse(data);
           }
         }
       } catch (e) {
         $.logErr(e, resp)
       } finally {
-        resolve();
+        resolve(data);
       }
     })
-    await $.wait(3000)
+    await $.wait(20000)
     resolve();
   })
 }
@@ -1204,30 +1245,28 @@ async function exchangeProNotify() {
       $.exchangeEndTime = new Date(exchangeEndTime + new Date().getTimezoneOffset()*60*1000 + 8*60*60*1000).toLocaleString('zh', {hour12: false});
       //脚本运行此时的时间点
       nowHours = nowTimes.getHours();
+    } else if (shel['exchangeStatus'] === 3) {
+      //兑换超时
     }
   }
   if (exchangeEndTime) {
     //比如兑换(超时)截止时间是2020/12/8 09:20:04,现在时间是2020/12/6
     if (nowTimes < exchangeEndTime) {
-      //还可以兑换
-      // 一:在兑换超时这一天(2020/12/8 09:20:04)的前2小时内通知
-      if ((exchangeEndTime - nowTimes.getTime()) <= 3600000 * 2) {
-        let expiredTime = parseInt(((exchangeEndTime - nowTimes.getTime()) / (60*1000)).toFixed(0))
-        $.msg($.name, ``, `【京东账号${$.index}】${$.nickName}\n【生产商品】${$.productName}${expiredTime}分钟后兑换超时\n【兑换截止时间】${$.exchangeEndTime}\n请速去京喜APP->首页->好物0元造进行兑换`, {'open-url': jxOpenUrl, 'media-url': $.picture})
+      // 一:在兑换超时这一天(2020/12/8 09:20:04)的前3小时内通知（每次运行都通知）
+      let flag = true;
+      if ((exchangeEndTime - nowTimes.getTime()) <= 3600000 * 3) {
+        let expiredTime = parseFloat(((exchangeEndTime - nowTimes.getTime()) / (60*60*1000)).toFixed(1))
+        $.msg($.name, ``, `【京东账号${$.index}】${$.nickName}\n【生产商品】${$.productName}${expiredTime}小时后兑换超时\n【兑换截止时间】${$.exchangeEndTime}\n请速去京喜APP->首页->好物0元造进行兑换`, {'open-url': jxOpenUrl, 'media-url': $.picture})
         // if ($.isNode()) await notify.sendNotify(`${$.name} - 京东账号${$.index} - ${$.nickName}`, `【京东账号${$.index}】${$.nickName}\n【生产商品】${$.productName}${(exchangeEndTime - nowTimes) / 60*60*1000}分钟后兑换超时\n【兑换截止时间】${$.exchangeEndTime}\n请速去京喜APP->首页->好物0元造进行兑换`, { url: jxOpenUrl })
-        if ($.isNode()) allMessage += `【京东账号${$.index}】${$.nickName}\n【生产商品】${$.productName}${expiredTime}分钟后兑换超时\n【兑换截止时间】${$.exchangeEndTime}\n请速去京喜APP->首页->好物0元造进行兑换${$.index !== cookiesArr.length ? '\n\n' : ''}`
+        if ($.isNode()) allMessage += `【京东账号${$.index}】${$.nickName}\n【生产商品】${$.productName}${expiredTime}小时后兑换超时\n【兑换截止时间】${$.exchangeEndTime}\n请速去京喜APP->首页->好物0元造进行兑换${$.index !== cookiesArr.length ? '\n\n' : ''}`
+        flag = false;
       }
-      //二:在兑换超时日期前的时间一天通知三次(2020/12/6 9,10,11点,以及在2020/12/7 9,10,11点各通知一次)
-      if (nowHours === exchangeEndHours || nowHours === (exchangeEndHours + 1) || nowHours === (exchangeEndHours + 2)) {
+      //二:在可兑换的时候，0,2,4等等小时通知一次
+      if (nowHours % 2 === 0 && flag) {
         $.msg($.name, ``, `【京东账号${$.index}】${$.nickName}\n【生产商品】${$.productName}已可兑换\n【兑换截止时间】${$.exchangeEndTime}\n请速去京喜APP->首页->好物0元造进行兑换`, {'open-url': jxOpenUrl, 'media-url': $.picture})
         // if ($.isNode()) await notify.sendNotify(`${$.name} - 京东账号${$.index} - ${$.nickName}`, `【京东账号${$.index}】${$.nickName}\n【生产商品】${$.productName}已可兑换\n【兑换截止时间】${$.exchangeEndTime}\n请速去京喜APP->首页->好物0元造进行兑换`, { url: jxOpenUrl })
         if ($.isNode()) allMessage += `【京东账号${$.index}】${$.nickName}\n【生产商品】${$.productName}已可兑换\n【兑换截止时间】${$.exchangeEndTime}\n请速去京喜APP->首页->好物0元造进行兑换${$.index !== cookiesArr.length ? '\n\n' : ''}`
       }
-    } else {
-      //兑换已超时
-      $.msg($.name, ``, `【京东账号${$.index}】${$.nickName}\n【生产商品】${$.productName}兑换已超时，请重新选择商品生产\n【兑换截止时间】${$.exchangeEndTime}`, {'open-url': jxOpenUrl})
-      // if ($.isNode()) await notify.sendNotify(`${$.name} - 京东账号${$.index} - ${$.nickName}`, `【京东账号${$.index}】${$.nickName}\n【生产商品】${$.productName}兑换已超时，请重新选择商品生产\n【兑换截止时间】${$.exchangeEndTime}`, { url: jxOpenUrl })
-      if ($.isNode()) allMessage += `【京东账号${$.index}】${$.nickName}\n【生产商品】${$.productName}兑换已超时，请重新选择商品生产\n【兑换截止时间】${$.exchangeEndTime}${$.index !== cookiesArr.length ? '\n\n' : ''}`
     }
   }
 }
@@ -1254,9 +1293,7 @@ async function showMsg() {
 function readShareCode() {
   console.log(`开始`)
   return new Promise(async resolve => {
-  $.get({url: "https://github.com/ZFeng3242/RandomShareCode/raw/main/JD_Dream_Factory.json",headers:{
-    "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
-  }}, async (err, resp, data) => {
+    $.get({url: `https://cdn.jsdelivr.net/gh/ZFeng3242/RandomShareCode@main/JD_Dream_Factory.json`, 'timeout': 10000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -1299,12 +1336,23 @@ function shareCodesFormat() {
 }
 function requireConfig() {
   return new Promise(async resolve => {
-    await updateTuanIdsCDN('https://github.com/ZFeng3242/updateTeam/raw/master/shareCodes/jd_updateFactoryTuanId.json');
-    if ($.tuanIdS && $.tuanIdS.tuanActiveId) {
-      tuanActiveId = $.tuanIdS.tuanActiveId;
+    tuanActiveId = $.isNode() ? (process.env.TUAN_ACTIVEID || tuanActiveId) : ($.getdata('tuanActiveId') || tuanActiveId);
+    if (!tuanActiveId) await updateTuanIdsCDN();
+    if ($.tuanConfigs && $.tuanConfigs['tuanActiveId']) {
+      tuanActiveId = $.tuanConfigs['tuanActiveId'];
+      console.log(`拼团活动ID: 获取成功 ${tuanActiveId}`)
+    } else {
+      if (!$.tuanConfigs) {
+        await updateTuanIdsCDN('https://cdn.jsdelivr.net/gh/ZFeng3242/updateTeam@master/shareCodes/jd_updateFactoryTuanId.json');
+        if ($.tuanConfigs && $.tuanConfigs['tuanActiveId']) {
+          tuanActiveId = $.tuanConfigs['tuanActiveId'];
+          console.log(`拼团活动ID: 获取成功 ${tuanActiveId}`)
+        } else {
+          console.log(`拼团活动ID：获取失败，将采取脚本内置活动ID`)
+        }
+      }
     }
     console.log(`开始获取${$.name}配置文件\n`);
-    console.log(`tuanActiveId: ${tuanActiveId}`)
     //Node.js用户请在jdCookie.js处填写京东ck;
     const shareCodes = $.isNode() ? require('./jdDreamFactoryShareCodes.js') : '';
     console.log(`共${cookiesArr.length}个京东账号\n`);
@@ -1317,7 +1365,7 @@ function requireConfig() {
       })
     } else {
       if ($.getdata('jd_jxFactory')) $.shareCodesArr = $.getdata('jd_jxFactory').split('\n').filter(item => item !== "" && item !== null && item !== undefined);
-      console.log(`\nBoxJs设置的京喜工厂邀请码:${$.getdata('jd_jxFactory')}\n`);
+      console.log(`\nBoxJs设置的${$.name}好友邀请码:${$.getdata('jd_jxFactory')}\n`);
     }
     // console.log(`\n种豆得豆助力码::${JSON.stringify($.shareCodesArr)}`);
     console.log(`您提供了${$.shareCodesArr.length}个账号的${$.name}助力码\n`);
@@ -1395,7 +1443,7 @@ function taskTuanUrl(functionId, body = '', stk) {
       "Cookie": cookie,
       "Host": "m.jingxi.com",
       "Referer": "https://st.jingxi.com/pingou/dream_factory/divide.html",
-      "User-Agent": "jdpingou;iPhone;3.15.2;13.5.1;90bab9217f465a83a99c0b554a946b0b0d5c2f7a;network/wifi;model/iPhone12,1;appBuild/100365;ADID/696F8BD2-0820-405C-AFC0-3C6D028040E5;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/1;hasOCPay/0;supportBestPay/0;session/14;pap/JA2015_311210;brand/apple;supportJDSHWK/1;"
+      "User-Agent": "jdpingou"
     }
   }
 }
@@ -1553,8 +1601,8 @@ function decrypt(time, stk, type, url) {
       const random = '5gkjB6SpmC9s';
       $.token = `tk01wcdf61cb3a8nYUtHcmhSUFFCfddDPRvKvYaMjHkxo6Aj7dhzO+GXGFa9nPXfcgT+mULoF1b1YIS1ghvSlbwhE0Xc`;
       $.fingerprint = 5287160221454703;
-      const str = `${token}${$.fingerprint}${timestamp}${$.appId}${random}`;
-      hash1 = $.CryptoJS.SHA512(str, token).toString($.CryptoJS.enc.Hex);
+      const str = `${$.token}${$.fingerprint}${timestamp}${$.appId}${random}`;
+      hash1 = $.CryptoJS.SHA512(str, $.token).toString($.CryptoJS.enc.Hex);
     }
     let st = '';
     stk.split(',').map((item, index) => {
