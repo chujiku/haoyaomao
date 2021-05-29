@@ -35,10 +35,10 @@ $.inviteList = [];
 $.pkInviteList = [];
 $.secretpInfo = {};
 $.innerPkInviteList = [
-  'sSKNX-MpqKOJsNu_m5iLABwjHESM4ggMoWnE4jQolb-gghsoSHxSyMzO2Sgw8e0',
-  'sSKNX-MpqKOJsNvA49iYfF0vk-VP4OATmHFwc7stga4jeQDzXm3VORjKXNvv',
-  'sSKNX-MpqKOJsNu8nc6NA88mD03SR4re2f2oEOwXhwKldIQk7jmmFODK2ROPUVM',
-  'sSKNX-MpqKMHbAlvNg4AtbPk2pygMqWs0IwxO5kKoWMYVodHVTh4'
+  'sSKNX-MpqKOJsNu_m5iLABwjHESM4ggMoWnE4jQolb-gghsoSHxSyMzO2Sgw8eUD',
+  'sSKNX-MpqKOJsNvA49iYfF0vk-VP4OATmHFwc7stga4jeQDzXm3VORjKXNvnHQ',
+  'sSKNX-MpqKOJsNu8nc6NA88mD03SR4re2f2oEOwXhwKldIQk7jmmFODK2ROPUVst',
+  'sSKNX-MpqKMHbAlvNg4AtbPk2pygMqWs0IwxO5kKoWMYVodHVThwiQ'
 ];
 $.hotFlag = false; //是否火爆
 if ($.isNode()) {
