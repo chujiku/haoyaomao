@@ -180,7 +180,7 @@ async function zoo() {
     await takePostRequest('zoo_getTaskDetail');
     await $.wait(1000);
     //做任务
-    for (let i = 0; i < $.taskList.length && $.secretp && !$.hotFlag; i++) {
+    for (let i = 0; i < $.taskList.length && $.secretp; i++) {
       $.oneTask = $.taskList[i];
       if ([1, 3, 5, 7, 9, 26].includes($.oneTask.taskType) && $.oneTask.status === 1) {
         $.activityInfoList = $.oneTask.shoppingActivityVos || $.oneTask.brandMemberVos || $.oneTask.followShopVo || $.oneTask.browseShopVo;
@@ -233,7 +233,7 @@ async function zoo() {
       }
     }
     //===================================图鉴里的店铺====================================================================
-    if (new Date().getUTCHours() + 8 >= 17 && new Date().getUTCHours() + 8 <= 18 && !$.hotFlag) {//分享
+    if (new Date().getUTCHours() + 8 >= 17 && new Date().getUTCHours() + 8 <= 18 ) {//分享
       $.myMapList = [];
       await takePostRequest('zoo_myMap');
       for (let i = 0; i < $.myMapList.length; i++) {
@@ -245,7 +245,7 @@ async function zoo() {
         }
       }
     }
-    if (new Date().getUTCHours() + 8 >= 14 && new Date().getUTCHours() + 8 <= 17 && !$.hotFlag){//30个店铺，为了避免代码执行太久，下午2点到5点才做店铺任务
+    if (new Date().getUTCHours() + 8 >= 14 && new Date().getUTCHours() + 8 <= 17 ){//30个店铺，为了避免代码执行太久，下午2点到5点才做店铺任务
       console.log(`去做店铺任务`);
       $.shopInfoList = [];
       await takePostRequest('qryCompositeMaterials');
@@ -308,7 +308,7 @@ async function zoo() {
     }
     //==================================微信任务========================================================================
     $.wxTaskList = [];
-    if(!$.hotFlag) await takePostRequest('wxTaskDetail');
+    await takePostRequest('wxTaskDetail');
     for (let i = 0; i < $.wxTaskList.length; i++) {
       $.oneTask = $.wxTaskList[i];
       if($.oneTask.taskType === 2 || $.oneTask.status !== 1){continue;} //不做加购
@@ -333,7 +333,7 @@ async function zoo() {
     }
     //=======================================================京东金融=================================================================================
     $.jdjrTaskList = [];
-    if(!$.hotFlag) await takePostRequest('jdjrTaskDetail');
+    await takePostRequest('jdjrTaskDetail');
     await $.wait(1000);
     for (let i = 0; i < $.jdjrTaskList.length; i++) {
       $.taskId = $.jdjrTaskList[i].id;
@@ -356,7 +356,7 @@ async function zoo() {
     }
     await $.wait(1000);
     $.pkTaskList = [];
-    if(!$.hotFlag) await takePostRequest('zoo_pk_getTaskDetail');
+    await takePostRequest('zoo_pk_getTaskDetail');
     await $.wait(1000);
     for (let i = 0; i < $.pkTaskList.length; i++) {
       $.oneTask = $.pkTaskList[i];
