@@ -88,15 +88,13 @@ if ($.isNode()) {
       if($.hotFlag)$.secretpInfo[$.UserName] = false;//火爆账号不执行助力
     }
   }
-  let res = [], res2 = [], res3 = [];
-  res3 = await getAuthorShareCode('https://raw.githubusercontent.com/ZFeng3242/RandomShareCode/main/JD_Zoo.json');
-  if (!res3) await getAuthorShareCode('https://cdn.jsdelivr.net/gh/ZFeng3242/RandomShareCode@main/JD_Zoo.json')
+  let res = [], res2 = [];
   if (new Date().getUTCHours() + 8 >= 17) {
     res = await getAuthorShareCode() || [];
     res2 = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/ZFeng3242/RandomShareCode@main/JD_Zoo.json') || [];
   }
   if (pKHelpAuthorFlag) {
-    $.innerPkInviteList = getRandomArrayElements([...$.innerPkInviteList, ...res, ...res2, ...res3], [...$.innerPkInviteList, ...res, ...res2, ...res3].length);
+    $.innerPkInviteList = getRandomArrayElements([...$.innerPkInviteList, ...res, ...res2], [...$.innerPkInviteList, ...res, ...res2].length);
     $.pkInviteList.push(...$.innerPkInviteList);
   }
   for (let i = 0; i < cookiesArr.length; i++) {
