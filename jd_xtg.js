@@ -109,6 +109,7 @@ const JD_API_HOST = "https://guardianstarjd.m.jd.com/star";
         $.j = index;
         $.times = 0;
         await JD_XTG(true);
+        await indexInfo();//抽奖
       }
       await showMsg();
     }
@@ -382,6 +383,58 @@ function doSupport(shareId) {
             if (data['data']['status'] === 4) $.item['max'] = true;
           }
           console.log(`助力结果:${JSON.stringify(data)}\n`);
+        }
+      } catch (e) {
+        $.logErr(e, resp);
+      } finally {
+        resolve();
+      }
+    });
+  });
+}
+function indexInfo() {
+  return new Promise(async (resolve) => {
+    const options = taskPostUrl('index/indexInfo', 'indexInfo', `starId=${$.activeId}&type=null`);
+    $.post(options, async (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`${JSON.stringify(err)}`);
+          console.log(`${$.name} API请求失败，请检查网路重试`);
+        } else {
+          data = JSON.parse(data);
+          if (data && data.code === 200) {
+            $.starPrizeVoList = (data.data.starPrizeVoList || []).filter(vo => vo.status === 0 && data.data.myTotalStar >= vo['starGradeNum']);
+            for (let item of $.starPrizeVoList) {
+              await lottery(item['id']);
+              // await $.wait(500);
+            }
+          }
+        }
+      } catch (e) {
+        $.logErr(e, resp);
+      } finally {
+        resolve();
+      }
+    });
+  });
+}
+function lottery(id) {
+  return new Promise(async (resolve) => {
+    const options = taskPostUrl('task/lottery', 'lottery', `starId=${$.activeId}&id=${id}`);
+    $.post(options, (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`${JSON.stringify(err)}`);
+          console.log(`${$.name} API请求失败，请检查网路重试`);
+        } else {
+          data = JSON.parse(data);
+          if (data && data.code === 200) {
+            if (data.data && data.data.status === 1) {
+              console.log(`京东账号${$.index} ${$.nickName || $.UserName}恭喜中奖\n【${$.activeId}】星推官抽奖详情${JSON.stringify(data)}\n`);
+            } else {
+              console.log(`【${$.activeId}】星推官抽奖：未中奖\n`)
+            }
+          }
         }
       } catch (e) {
         $.logErr(e, resp);
