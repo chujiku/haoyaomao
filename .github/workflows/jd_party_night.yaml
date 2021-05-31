@@ -6,7 +6,7 @@ name: 京东沸腾之夜(5.31日有效)
 on:
     workflow_dispatch:
     schedule:
-        - cron: "0 0-23/* * * *"
+        - cron: "0 */1 * * *"
     watch:
         types: [started]
     repository_dispatch:
