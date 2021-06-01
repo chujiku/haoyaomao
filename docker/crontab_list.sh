@@ -39,8 +39,6 @@
 0 0 * * * node /scripts/jd_xtg.js >> /scripts/logs/jd_xtg.log 2>&1
 #家电星推官助力
 0 0 * * * node /scripts/jd_xtg_help.js >> /scripts/logs/jd_xtg_help.log 2>&1
-#京东沸腾之夜(5.31日有效)
-55,0 15-23/1 * * * node /scripts/jd_party_night.js >> /scripts/logs/jd_party_night.log 2>&1
 
 ##############长期活动##############
 # 签到
