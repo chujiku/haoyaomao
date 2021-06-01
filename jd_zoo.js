@@ -36,8 +36,8 @@ $.inviteList = [];
 $.pkInviteList = [];
 $.secretpInfo = {};
 $.innerPkInviteList = [
-  'sSKNX-MpqKOJsNu_m5iLABwjHESM4ggMoWnE4jQolb-gghsoSHxSyMzO2Sgw8eUC',
-  'sSKNX-MpqKOJsNvA49iYfF0vk-VP4OATmHFwc7stga4jeQDzXm3VORjKXNvnHA',
+  'sSKNX-MpqKOJsNu_m5iLABwjHESM4ggMoWnE4jQolb-gghsoSHxSyMzO2Sgw8eYC',
+  'sSKNX-MpqKOJsNvA49iYfF0vk-VP4OATmHFwc7stga4jeQDzXm3VORjKXNvkHA',
   'sSKNX-MpqKOJsNu8nc6NA88mD03SR4re2f2oEOwXhwKldIQk7jmmFODK2ROPUVst',
   'sSKNX-MpqKMHbAlvNg4AtbPk2pygMqWs0IwxO5kKoWMYVodHVThwiQ'
 ];
