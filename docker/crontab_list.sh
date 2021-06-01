@@ -32,7 +32,9 @@
 #金榜创造营
 40 9,21 * * * node /scripts/jd_gold_creator.js >> /scripts/logs/jd_gold_creator.log 2>&1
 #618动物联萌
-13 * * * * node /scripts/jd_zoo.js >> /scripts/logs/jd_zoo.log 2>&1
+33 0,6-23/2 * * * node /scripts/jd_zoo.js >> /scripts/logs/jd_zoo.log 2>&1
+#618动物联萌专门收集金币(每小时的第30分运行一次)
+0-59/30 * * * * node /scripts/jd_zooCollect.js >> /scripts/logs/jd_zooCollect.log 2>&1
 #家电星推官
 0 0 * * * node /scripts/jd_xtg.js >> /scripts/logs/jd_xtg.log 2>&1
 #家电星推官助力
