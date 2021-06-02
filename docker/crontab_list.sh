@@ -39,6 +39,8 @@
 0 0 * * * node /scripts/jd_xtg.js >> /scripts/logs/jd_xtg.log 2>&1
 #家电星推官助力
 0 0 * * * node /scripts/jd_xtg_help.js >> /scripts/logs/jd_xtg_help.log 2>&1
+#总裁送好礼
+30 12,1 * * * node /scripts/jd_zc.js >> /scripts/logs/jd_zc.log 2>&1
 
 ##############长期活动##############
 # 签到
