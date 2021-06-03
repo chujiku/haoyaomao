@@ -45,6 +45,12 @@
 0 0-23/4 * * * node /scripts/jd_mohe.js >> /scripts/logs/jd_mohe.log 2>&1
 #明星小店(星店长，2021-06-10)
 0 1,21 * * * node /scripts/jd_star_shop.js >> /scripts/logs/jd_star_shop.log 2>&1
+#龙舟
+15 13 1-18 6 *node /scripts/jd_dragonboat.js >> /scripts/logs/jd_dragonboat.log 2>&1
+#新潮品牌狂欢
+30 9,10 1-18 6 * node /scripts/jd_mcxhd_brandcity.js >> /scripts/logs/jd_mcxhd_brandcity.log 2>&1
+#品牌狂欢城
+30 10 1-18 6 * node /scripts/jd_brandcarnivalcity.js >> /scripts/logs/jd_brandcarnivalcity.log 2>&1
 
 ##############长期活动##############
 # 签到
