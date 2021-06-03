@@ -83,7 +83,7 @@ if ($.isNode()) {
         continue
       }
       await zoo();
-      if($.hotFlag)$.secretpInfo[$.UserName] = true;//火爆账号不执行助力
+      if($.hotFlag)$.secretpInfo[$.UserName] = false;//火爆账号不执行助力
     }
   }
   let res = [], res2 = [];
