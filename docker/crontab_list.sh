@@ -43,6 +43,8 @@
 30 12,1 * * * node /scripts/jd_zc.js >> /scripts/logs/jd_zc.log 2>&1
 #5G超级盲盒(活动时间：2021-06-2到2021-07-31)
 0 0-23/4 * * * node /scripts/jd_mohe.js >> /scripts/logs/jd_mohe.log 2>&1
+#明星小店(星店长，2021-06-10)
+0 1,21 * * * node /scripts/jd_star_shop.js >> /scripts/logs/jd_star_shop.log 2>&1
 
 ##############长期活动##############
 # 签到
