@@ -95,7 +95,7 @@ message = ""
             }
         }
 if ($.isNode() ){ 
- await notify.sendNotify("翻翻乐提现", `${message}\n\n吹水群：https://t.me/wenmou_car`);
+ await notify.sendNotify("翻翻乐提现", `${message}\n\n祝你下次好运！😅`);
 }
 
     })()
