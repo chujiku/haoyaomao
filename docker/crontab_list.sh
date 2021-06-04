@@ -49,6 +49,8 @@
 30 9,10 1-18 6 * node /scripts/jd_mcxhd_brandcity.js >> /scripts/logs/jd_mcxhd_brandcity.log 2>&1
 #品牌狂欢城
 30 10 1-18 6 * node /scripts/jd_brandcarnivalcity.js >> /scripts/logs/jd_brandcarnivalcity.log 2>&1
+#翻翻乐
+1 0-23/1 * 6 * node /scripts/jd_flipcards.js >> /scripts/logs/jd_flipcards.log 2>&1
 
 ##############长期活动##############
 # 签到
