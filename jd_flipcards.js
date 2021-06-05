@@ -1,6 +1,6 @@
 /*
 翻翻乐@wenmoux
-更新: 2021-06-04 00:25
+更新: 2021-06-05 09:15
 抄自 @yangtingxiao 抽奖机脚本
 活动入口： 京东极速版-我的-省钱大赢家-翻翻乐
 极速版大赢家翻翻乐活动
@@ -22,7 +22,7 @@ cron "1 0-23/1 * 6 *" script-path=https://raw.githubusercontent.com/Wenmoux/scri
 const $ = new Env('翻翻乐');
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
-const openum =$.isNode()?( process.env.Openum? process.env.Openum:5):5//翻牌次数 可以自己改
+const openum =$.isNode()?( process.env.Openum? process.env.Openum:3):3//翻牌次数 可以自己改
 const randomCount = $.isNode() ? 20 : 5;
 const notify = $.isNode() ? require('./sendNotify') : '';
 let merge = {}
@@ -73,12 +73,11 @@ message = ""
                 let leftTime = await check()
                 if (leftTime != 0) {
                     console.log("时间未到,请继续等待哦！")
-                    $.message += "还没到开红包时间哦~  \n"
+                    $.message += `还没到开红包时间哦~剩余时间${parseInt(leftTime / 60000)}min~\n`
                 } else {
                     console.log("时间已到,开始开红包")
                     await open("gambleOpenReward")
-                    await $.wait(500)
-                    for (k = 0; k < 5&& $.canDraw; k++) {
+                    for (k = 0; k < openum&& $.canDraw; k++) {
                         await open("gambleChangeReward")
                         await $.wait(1000);
                     }
@@ -88,14 +87,14 @@ message = ""
                         await Draw($.reward.id, $.reward.poolBaseId, $.reward.prizeGroupId, $.reward.prizeBaseId, $.reward.prizeType)
                         //    await notify.sendNotify(`京东极速版大赢家翻倍红包提现`, `${$.message}`); 
                     }
-
+                    
                 }
                 await totalPrize()
                 message += $.message + `\n累计获得：￥${$.prize}  \n\n`
             }
         }
 if ($.isNode() ){ 
- await notify.sendNotify("翻翻乐提现", `${message}\n\n祝你下次好运！😅`);
+ await notify.sendNotify("翻翻乐提现");
 }
 
     })()
@@ -118,12 +117,20 @@ function check() {
                     data = JSON.parse(data);
 
                     if (data.code === 0) {
+                    //    resolve(data.data.leftTime)
+                        let time = (parseInt(data.data.leftTime / 60000)) 
+                        if(  data.data.leftTime<1000*100){
+                        await $.wait(data.data.leftTime+600);
+                        console.log("马上就好")
+                        resolve(0)
+                        }else{                        
+                        console.log("等你🐎呢")
                         resolve(data.data.leftTime)
-                        let time = (parseInt(data.data.leftTime / 60000))
+                        }            
                         console.log("查询成功 剩余时间：" + time + "min")
                     } else {
                         console.log(data)
-                        resolve("6")
+                        resolve(6)
                     }
                 }
             } catch (e) {
@@ -145,11 +152,18 @@ function totalPrize() {
                 } else {
                     //     console.log(data)
                     data = JSON.parse(data);
-
                     if (data.code === 0 && data.data&&data.data.items) {
                         for (item in data.data.items){
-                       $.prize =parseFloat($.prize)+ parseFloat(data.data.items[item].amount)
-                        }                        
+                        reward = data.data.items[item]
+                       if(reward.prizeType === 4){
+                       $.prize =parseFloat($.prize)+ parseFloat(reward.amount)
+                       if(reward.state === 0){   
+                       console.log(`检测到有${reward.amount}未提现,尝试提现ing...`)    
+                       await Draw(reward.id, reward.poolBaseId, reward.prizeGroupId, reward.prizeBaseId, reward.prizeType)
+                       }
+                    } 
+                       await $.wait(500);
+                           }                        
                         console.log("查询成功 共提现：￥" + $.prize)
                     } else {
                         $essage += data.errMsg
@@ -183,12 +197,25 @@ function open(functionid, type) {
                     //console.log(data)
                     data = JSON.parse(data);
                     if (data.code === 0 && data.data) {
-                        $.reward = data.data
+                      if(functionid!="gambleObtainReward"){
                         console.log("当前红包：" + data.data.rewardValue + "翻倍次数：" + data.data.changeTimes)
+                        if(data.data.rewardState===3){
+                        $.canDraw=false
+                        console.log("翻倍失败啦...")
+                        $.message += `当前：￥${data.data.rewardValue} 翻倍失败啦`
+                        }else if(data.data.rewardState===1){
+                        console.log("翻倍成功啦")                        }else{
+                        console.log(data.data)
+                     console.log(`状态 ${data.data.rewardState} 还不知道是什么原因嗷`) 
+                        }
+                       } else{
+               //     console.log(data)                             
+                       }
+                      $.reward = data.data
                     } else {
                         $.canDraw = false
                         console.log(data.errMsg)
-                        $.message += "  翻倍失败😅\n"
+                        $.message += data.errMsg+"\n"
                     }
                 }
             } catch (e) {
@@ -215,10 +242,10 @@ function Draw(id, poolBaseId, prizeGroupId, prizeBaseId, prizeType) {
                     data = JSON.parse(data);
                     if (data.code === 0 && data.data && data.data.message) {
                         console.log("提现结果：" + data.data.message)
-                        $.message += "提现结果：" + data.data.message
+                        $.message += "提现结果：" + data.data.message+"\n"
                     } else {
                         console.log(data)
-                        $.message += "提现结果：" + JSON.stringify(data)
+                        $.message += "提现结果：" + JSON.stringify(data)+"\n"
                     }
                 }
             } catch (e) {
