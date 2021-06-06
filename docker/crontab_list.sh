@@ -63,6 +63,8 @@
 05 23,6 3-18 6 * node /scripts/jd_618Opencard05.js >> /scripts/logs/jd_618Opencard05.log 2>&1
 #限时盲盒
 30 7,19 1-18 6 * node /scripts/jd_limitBox.js >> /scripts/logs/jd_limitBox.log 2>&1
+#主会场红包雨
+1 20 1-18 6 * node /scripts/jd_hby_lottery.js >> /scripts/logs/jd_hby_lottery.log 2>&1
 
 ##############长期活动##############
 # 签到
