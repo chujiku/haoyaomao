@@ -93,6 +93,8 @@ if ($.isNode()) {
     res = await getAuthorShareCode() || [];
     res2 = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/ZFeng3242/RandomShareCode@main/JD_Zoo.json') || [];
   }
+  // if (new Date().getHours() === 11 || new Date().getHours() === 12 || (new Date().getHours() === 13 && new Date().getMinutes() < 35)) {
+  // }
   if (pKHelpAuthorFlag) {
     $.innerPkInviteList = getRandomArrayElements([...$.innerPkInviteList, ...res, ...res2], [...$.innerPkInviteList, ...res, ...res2].length);
     $.pkInviteList.push(...$.innerPkInviteList);
